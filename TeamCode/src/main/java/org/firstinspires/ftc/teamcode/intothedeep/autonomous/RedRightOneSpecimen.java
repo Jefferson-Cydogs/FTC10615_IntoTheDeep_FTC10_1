@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.core.CyDogsChassis;
+import org.firstinspires.ftc.teamcode.chassis.MegalodogChassis;
 
 
 // The 'extends LinearOpMode' is needed so this code can run the build in op mode code from FIRST.
@@ -20,7 +20,7 @@ public class RedRightOneSpecimen extends LinearOpMode {
 
         // this lets us see how long the op mode has run
 
-        CyDogsChassis myBot = new CyDogsChassis(this);
+        MegalodogChassis myBot = new MegalodogChassis(this);
         // Put code that should run during initialization HERE in this area
         myBot.BackLeftWheel.setDirection(DcMotorSimple.Direction.REVERSE);
         myBot.FrontLeftWheel.setDirection(DcMotorSimple.Direction.REVERSE);
