@@ -11,9 +11,13 @@ public class MegalodogChassis {
     public DcMotor FrontRightWheel;
     public DcMotor BackLeftWheel;
     public DcMotor BackRightWheel;
-    private int WheelDiameter=104;    private LinearOpMode myOpMode;
+    private LinearOpMode myOpMode;
+    private int WheelDiameter=104;
     private int RPM = 435;
     private double ticksPerRevolution=384.5;
+
+    // mmPer90DegreeRotation needs to be configured for each robot based on it's chassis size
+    private double mmPer90DegreeRotation=454.22;
     public enum Direction {LEFT, CENTER, RIGHT}
     public enum Alliance {BLUE, RED}
 
@@ -54,9 +58,9 @@ public class MegalodogChassis {
         // > Clear Encoders of prior data
         FrontLeftWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         FrontRightWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                BackLeftWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                BackRightWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                FrontLeftWheel.setTargetPosition(0);
+        BackLeftWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BackRightWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FrontLeftWheel.setTargetPosition(0);
         FrontRightWheel.setTargetPosition(0);
         BackLeftWheel.setTargetPosition(0);
         BackRightWheel.setTargetPosition(0);
@@ -147,7 +151,7 @@ public class MegalodogChassis {
         double TicksToTarget;
         double TicksPerSecond;
 
-        TicksToTarget = (mmToTarget / ( WheelDiameter* Math.PI)) * (ticksPerRevolution);
+        TicksToTarget = (mmToTarget / (WheelDiameter * Math.PI)) * (ticksPerRevolution);
         TicksPerSecond = ((VelocityPercentage * RPM) / 60) * ticksPerRevolution;
         // myOpMode.telemetry.addData("ticksToTarget", TicksToTarget);
         //myOpMode.telemetry.update();
@@ -165,18 +169,18 @@ public class MegalodogChassis {
         myOpMode.sleep(WaitTime);
     }
 
-    public void RotateRight(int degree, double VelocityPercentage, int WaitTime){
+    public void RotateRight(double degree, double VelocityPercentage, int WaitTime){
 
         RotateLeft(-1*degree, VelocityPercentage, WaitTime);
     }
 
-    public void RotateLeft(int degree, double VelocityPercentage, int WaitTime) {
-        int mmToTarget;
+    public void RotateLeft(double degree, double VelocityPercentage, int WaitTime) {
+        double mmToTarget;
         double TicksToTarget;
         double TicksPerSecond;
 
         // converts degree to a mm distance
-        mmToTarget = degree * (560 / 90);
+        mmToTarget = degree * (mmPer90DegreeRotation / 90.0);
         // diamter of new robot wheels =
         // name is
         // uses the formula we've always had for rotation
@@ -197,6 +201,6 @@ public class MegalodogChassis {
         }
         myOpMode.sleep(WaitTime);
     }
-
 }
+
 

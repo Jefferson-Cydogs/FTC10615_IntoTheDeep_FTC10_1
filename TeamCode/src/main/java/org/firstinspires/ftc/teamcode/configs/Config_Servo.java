@@ -43,7 +43,7 @@ public class Config_Servo extends LinearOpMode {
         servo2 = initalizeServo("DeliveryBox");
         servo3 = initalizeServo("SpecimenGripper");
         // if (!initalizeServo("servo2")) return;
-       // if (!initalizeServo("servo3")) return;
+        // if (!initalizeServo("servo3")) return;
         //if (!initalizeServo("servo4")) return;
 
         servo1.setDirection(Servo.Direction.FORWARD);
@@ -237,5 +237,4 @@ public class Config_Servo extends LinearOpMode {
         }
     }
 }
-
 

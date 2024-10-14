@@ -17,24 +17,24 @@ public class Config_ContinuousServo extends LinearOpMode {
             IntakeBox = hardwareMap.get(CRServo.class, "IntakeBox");
 
 
-        waitForStart();
+            waitForStart();
 
 
-        while (opModeIsActive()) {
-            // do op mode things here
+            while (opModeIsActive()) {
+                // do op mode things here
 
-            if (gamepad1.a) {
-                IntakeBox.setPower(0.5);
-            sleep(2000);
+                if (gamepad1.a) {
+                    IntakeBox.setPower(0.5);
+                    sleep(2000);
+                }
+                else if(gamepad1.b) {
+                    IntakeBox.setPower(-0.5);
+                    sleep(2000);
+                }
+                else {
+                    IntakeBox.setPower(0);
+                }
             }
-            else if(gamepad1.b) {
-                IntakeBox.setPower(-0.5);
-            sleep(2000);
-            }
-            else {
-                IntakeBox.setPower(0);
-            }
-        }
         }
 
     }
