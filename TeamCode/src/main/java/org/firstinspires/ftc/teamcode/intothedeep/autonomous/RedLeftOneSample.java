@@ -36,25 +36,25 @@ public class RedLeftOneSample extends LinearOpMode {
             // Put code that should run during the active mode HERE in this area
 
             // 1: Drive forward
-            myBot.MoveStraight(75,.3,400);
+            myBot.MoveStraight(-75,.3,1000);
             // 2: Rotate left 90 degrees
-            myBot.RotateLeft(90,.3,400);
+            myBot.RotateRight(90,.3,1000);
             // 3: Drive forward
-            myBot.MoveStraight(690,.3,400);
+            myBot.MoveStraight(690,.3,1000);
             // 4: Rotate left 45 degrees
-            myBot.RotateRight(45,.3,400);
+            myBot.RotateLeft(45,.3,1000);
             // 5: Drop sample
 
             // 6: Rotate right 45 degrees
-            myBot.RotateLeft(45,.3,400);
+            myBot.RotateRight(45,.3,1000);
             // 7: Drive backwards
-            myBot.MoveStraight(-670,.3,400);
+            myBot.MoveStraight(-670,.3,1000);
             // 8: Strafe right to low chamber
-            myBot.StrafeRight(920,.3,400);
+            myBot.StrafeRight(300,.3,1000);
             // 9: Rotate 90 degrees right
-            myBot.RotateLeft(90,.3,400);
+            myBot.RotateLeft(90,.3,1000);
             // 10: Touch low chamber close to left side
-            myBot.MoveStraight(100,.3,400);
+            myBot.MoveStraight(-900,.3,1000);
             // pts:11 w/ mechanisms
 
         }
