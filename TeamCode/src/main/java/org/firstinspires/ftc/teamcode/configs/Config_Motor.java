@@ -12,8 +12,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class Config_Motor extends LinearOpMode {
 
     //Declare the motors
-    private DcMotor motor1;
-    private DcMotor motor2;
+    private DcMotor IntakeExtension;
+    private DcMotor Lift;
     private DcMotor motor3;
     private DcMotor motor4;
 
@@ -32,30 +32,30 @@ public class Config_Motor extends LinearOpMode {
     public void runOpMode() {
         //Initilize the motors with error handling
 
-        motor1 = initializeMotor("RedSlide");
-        motor2 = initializeMotor("BlueSlide");
+        IntakeExtension = initializeMotor("RedSlide");
+        Lift = initializeMotor("BlueSlide");
         motor3 = initializeMotor("FrontLeftWheel");
         motor4 = initializeMotor("FrontRightWheel");
 
         //set inital taget positions to 0
 
-        motor1.setTargetPosition(0);
-        motor2.setTargetPosition(0);
+        IntakeExtension.setTargetPosition(0);
+        Lift.setTargetPosition(0);
         motor3.setTargetPosition(0);
         motor4.setTargetPosition(0);
 
         //Reset encoders and set motors to RUN_TO_POSITION mode
-        resetAndConfigureMotor(motor1);
-        resetAndConfigureMotor(motor2);
+        resetAndConfigureMotor(IntakeExtension);
+        resetAndConfigureMotor(Lift);
         resetAndConfigureMotor(motor3);
         resetAndConfigureMotor(motor4);
 
-        motor1.setDirection(DcMotorSimple.Direction.REVERSE);
-        motor2.setDirection(DcMotorSimple.Direction.REVERSE);
+        IntakeExtension.setDirection(DcMotorSimple.Direction.REVERSE);
+        Lift.setDirection(DcMotorSimple.Direction.REVERSE);
 
         //Set initial motor power to 0 (no movement)
-        motor1.setPower(0);
-        motor2.setPower(0);
+        IntakeExtension.setPower(0);
+        Lift.setPower(0);
         motor3.setPower(0);
         motor4.setPower(0);
 
@@ -76,7 +76,7 @@ public class Config_Motor extends LinearOpMode {
         while (opModeIsActive()&&selectedMotor == null){
             //Check for motor selection buttons based on PlayStation controller mapping
             if(gamepad1.a) {//Cross() button
-                selectedMotor = motor1;
+                selectedMotor = IntakeExtension;
                 selectedMotorName = "Motor 1";
                 motorTargetPosition = 0; //Start at position 0
                 selectedMotor.setTargetPosition(motorTargetPosition);
@@ -84,7 +84,7 @@ public class Config_Motor extends LinearOpMode {
                 telemetry.update();
                 sleep(300);
             }else if (gamepad1.b) {//Circle(O)button
-                selectedMotor = motor2;
+                selectedMotor = Lift;
                 selectedMotorName = "Motor2";
                 motorTargetPosition = 0; //Start position 0
                 selectedMotor.setTargetPosition(motorTargetPosition);
@@ -109,7 +109,7 @@ public class Config_Motor extends LinearOpMode {
                 sleep(300);
             }
             if (selectionTimer.seconds()>30){
-                selectedMotor=motor1;
+                selectedMotor=IntakeExtension;
                 selectedMotorName="Motor 1(default)";
             }
 
@@ -117,7 +117,7 @@ public class Config_Motor extends LinearOpMode {
 
         //If no motor was selected, default to Motor 1
         if(selectedMotor==null){
-            selectedMotor=motor1;
+            selectedMotor=IntakeExtension;
             selectedMotorName="Motor 1 (Defualt)";
             motorTargetPosition=0;
             selectedMotor.setTargetPosition(motorTargetPosition);

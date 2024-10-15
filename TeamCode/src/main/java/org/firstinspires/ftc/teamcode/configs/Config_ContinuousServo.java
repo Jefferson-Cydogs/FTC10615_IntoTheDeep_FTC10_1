@@ -25,11 +25,11 @@ public class Config_ContinuousServo extends LinearOpMode {
 
                 if (gamepad1.a) {
                     IntakeBox.setPower(0.5);
-                    sleep(2000);
+                 //   sleep(2000);
                 }
                 else if(gamepad1.b) {
                     IntakeBox.setPower(-0.5);
-                    sleep(2000);
+                   // sleep(2000);
                 }
                 else {
                     IntakeBox.setPower(0);
