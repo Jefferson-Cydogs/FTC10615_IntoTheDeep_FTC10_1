@@ -14,7 +14,7 @@ public class Config_ContinuousServo extends LinearOpMode {
     @Override
     public void runOpMode() {
         {
-            IntakeBox = hardwareMap.get(CRServo.class, "IntakeBox");
+            IntakeBox = hardwareMap.get(CRServo.class, "IntakeBox");telemetry.update();
 
 
             waitForStart();
