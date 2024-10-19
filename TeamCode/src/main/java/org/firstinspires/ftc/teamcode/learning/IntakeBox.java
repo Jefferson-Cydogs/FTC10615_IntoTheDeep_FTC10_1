@@ -17,6 +17,8 @@ public class IntakeBox extends LinearOpMode {
         {
             Extension = hardwareMap.get(Servo.class, "Extension");
             Extension.setDirection(Servo.Direction.REVERSE);
+
+
             Extension.setPosition(servoPosition);
 
 
