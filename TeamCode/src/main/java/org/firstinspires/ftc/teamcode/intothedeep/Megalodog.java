@@ -149,17 +149,19 @@ public class Megalodog extends MegalodogChassis {
         }
 
     public void MoveSlideAndScoop (int distanceMM,int wait) {
-        if (extensionSliderPosition < extensionSliderMax) {
+        if (distanceMM < extensionSliderMax) {
             ExtensionServo.setPosition(0.6);
-            extensionSliderPosition += 100;
-            ExtensionSlider.setTargetPosition(extensionSliderPosition);
+            ExtensionSlider.setTargetPosition(distanceMM);
             myOpMode.sleep(1000);
             extensionServoPosition = extensionServoHome;
-            ExtensionServo.setPosition(extensionServoPosition);
+            ExtensionServo.setPosition(extensionServoHome);
         }
         ;
     }
-    public void RaiseLift (int hightMM, int wait){};
+    public void RaiseLift (int hightMM, int waittime){
+        Lift.setTargetPosition(hightMM);
+        myOpMode.sleep(waittime);
+    };
 
     public void EmptyLift (int wait){};
 
@@ -175,16 +177,21 @@ public class Megalodog extends MegalodogChassis {
 
     public void runintake(int direction,int howLong,int wait){
         //turn servo
+
     }
     public void RealeaseIntoBucket(int wait){
         //spin servo opposite
+
     }
     public void Returnlift(int wait){
         //turn motor
     }
-    public void GrabandLift(int height, int wait){
+    public void GrabandLift(int height, int waittime){
         //turn servo and raise lift
-
+        specimenServoPosition =specimenServoClosed;
+        SpecimenGripperServo.setPosition(specimenServoPosition);
+        myOpMode.sleep(waittime);
+        RaiseLift(1000, 800);
     }
 }
 
