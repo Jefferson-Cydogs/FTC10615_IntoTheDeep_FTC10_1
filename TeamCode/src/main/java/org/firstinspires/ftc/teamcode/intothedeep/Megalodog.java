@@ -130,44 +130,79 @@ public class Megalodog extends MegalodogChassis {
         Lift.setPower(0.6);
     }
 
-    public void TurnIntakeOn () {
-//It turns the continues servo forward
 
+    public void ReverseIntake () {
+//It turns the continues servo reverse
+        IntakeBoxServo.setPower(-continuousIntakePower);
+        myOpMode.sleep(500);
+        IntakeBoxServo.setPower(0);
     }
-    public void TurnIntakeOff () {
-//It turns the continues servo off
-
-    }
-    public void GrabSpeicen (int waitime) {
+    public void GrabSpeicen (int waittime) {
 //The servo rotates forward
-
+        specimenServoPosition =specimenServoClosed;
+        SpecimenGripperServo.setPosition(specimenServoPosition);
+        myOpMode.sleep(waittime);
     }
-    public void HookAndLetGo (int waitime) {
-// It pushes the sepiecem down and then lets go of it
-
+    public void HookAndLetGo (int height, int wait){
+        //turn servo and raise lift
+        Lift.setTargetPosition(height);
+        myOpMode.sleep(wait);
+        LetGoOfSpecimen(250);
+        myOpMode.sleep(wait);
     }
 
-    public void MoveSlideAndScoop (int distanceMM,int wait){};
+    public void MoveSlideAndScoop (int distanceMM,int wait) {
+        if (extensionSliderPosition < extensionSliderMax) {
+            ExtensionServo.setPosition(0.6);
+            extensionSliderPosition += 100;
+            ExtensionSlider.setTargetPosition(extensionSliderPosition);
+            myOpMode.sleep(1000);
+            extensionServoPosition = extensionServoHome;
+            ExtensionServo.setPosition(extensionServoPosition);
+        }
+        ;
+    }
 
-    public void RaiseLift (int hightMM, int wait){};
+    public void RaiseLift (int hightMM, int wait){
 
-    public void EmptyLift (int wait){};
+        Lift.setTargetPosition(hightMM);
+        myOpMode.sleep(wait);
 
-    public void LetGoOfSpecimen(int wait){};
+    };
+
+    public void EmptyBox (int wait){
+
+        deliveryBoxServoPosition = deliveryServoDump;
+        myOpMode.sleep(wait);
+    };
+    public void LetGoOfSpecimen(int waittime){
+        specimenServoPosition =specimenServoOpen;
+        SpecimenGripperServo.setPosition(specimenServoPosition);
+        myOpMode.sleep(waittime);
+    };
 
     public void CheckSampleColor (){};
 
-    public void runintake(int direction,int howLong,int wait){
-        //turn servo
+    public void TurnIntakeOn () {
+//It turns the continues servo forward
+
+        IntakeBoxServo.setPower(continuousIntakePower);
+        myOpMode.sleep(500);;
+        IntakeBoxServo.setPower(0);
     }
-    public void RealeaseIntoBucket(int wait){
-        //spin servo opposite
-    }
+
     public void Returnlift(int wait){
         //turn motor
     }
     public void GrabandLift(int height, int wait){
         //turn servo and raise lift
     }
-}
 
+    public void DownLift(int wait){
+        //turn motor
+        deliveryBoxServoPosition = deliveryServoHome;
+        DeliveryBoxServo.setPosition(deliveryBoxServoPosition);
+        myOpMode.sleep(wait);
+
+    }
+}
