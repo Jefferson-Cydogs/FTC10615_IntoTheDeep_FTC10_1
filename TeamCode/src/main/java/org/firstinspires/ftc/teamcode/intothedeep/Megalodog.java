@@ -138,24 +138,40 @@ public class Megalodog extends MegalodogChassis {
 //It turns the continues servo off
 
     }
-    public void GrabSpeicen (int waitime) {
+    public void GrabSpeicen (int waittime) {
 //The servo rotates forward
-
+        specimenServoPosition =specimenServoClosed;
+        SpecimenGripperServo.setPosition(specimenServoPosition);
+        myOpMode.sleep(waittime);
     }
     public void HookAndLetGo (int waitime) {
 // It pushes the sepiecem down and then lets go of it
+        }
 
+    public void MoveSlideAndScoop (int distanceMM,int wait) {
+        if (extensionSliderPosition < extensionSliderMax) {
+            ExtensionServo.setPosition(0.6);
+            extensionSliderPosition += 100;
+            ExtensionSlider.setTargetPosition(extensionSliderPosition);
+            myOpMode.sleep(1000);
+            extensionServoPosition = extensionServoHome;
+            ExtensionServo.setPosition(extensionServoPosition);
+        }
+        ;
     }
-
-    public void MoveSlideAndScoop (int distanceMM,int wait){};
-
     public void RaiseLift (int hightMM, int wait){};
 
     public void EmptyLift (int wait){};
 
-    public void LetGoOfSpecimen(int wait){};
+    public void LetGoOfSpecimen(int waittime){
+        specimenServoPosition =specimenServoOpen;
+        SpecimenGripperServo.setPosition(specimenServoPosition);
+        myOpMode.sleep(waittime);
+    };
 
-    public void CheckSampleColor (){};
+    public void CheckSampleColor (){
+
+    };
 
     public void runintake(int direction,int howLong,int wait){
         //turn servo
@@ -168,6 +184,7 @@ public class Megalodog extends MegalodogChassis {
     }
     public void GrabandLift(int height, int wait){
         //turn servo and raise lift
+
     }
 }
 
