@@ -130,17 +130,17 @@ public class Megalodog extends MegalodogChassis {
         Lift.setPower(0.6);
     }
 
-    public void TurnIntakeOn () {
+    public void TurnIntakeOn (int waitime) {
 //It turns the continues servo forward
 
         IntakeBoxServo.setPower(continuousIntakePower);
-        myOpMode.sleep(500);;
+        myOpMode.sleep(waitime);;
     IntakeBoxServo.setPower(0);
     }
-    public void ReverseIntake () {
+    public void ReverseIntake (int waitime) {
 //It turns the continues servo reverse
         IntakeBoxServo.setPower(-continuousIntakePower);
-        myOpMode.sleep(500);
+        myOpMode.sleep(waitime);
         IntakeBoxServo.setPower(0);
     }
     public void GrabSpeicem (int waitime) {
