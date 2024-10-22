@@ -166,14 +166,14 @@ public class Megalodog extends MegalodogChassis {
 
         deliveryBoxServoPosition = deliveryServoDump;
     myOpMode.sleep(wait);
-    };
+    }
 
     public void LetGoOfSpecimen(int wait){
         specimenServoPosition =specimenServoOpen;
         SpecimenGripperServo.setPosition(specimenServoPosition);
         myOpMode.sleep(wait);
 
-    };
+    }
 
     public void CheckSampleColor (){};
 
@@ -183,10 +183,9 @@ public class Megalodog extends MegalodogChassis {
     public void RealeaseIntoBucket(int wait){
         //spin servo opposite
     }
-    public void Downift(int wait){
+    public void Downlift(int wait){
         //turn motor
-        deliveryBoxServoPosition = deliveryServoHome;
-        DeliveryBoxServo.setPosition(deliveryBoxServoPosition);
+        Lift.setTargetPosition(30);
    myOpMode.sleep(wait);
 
     }
