@@ -147,7 +147,7 @@ public class Megalodog extends MegalodogChassis {
 //The servo rotates forward
 
     }
-    public void HookAndLetGo (int waitime) {
+    public void Grabandlift(int waitime) {
 // It pushes the sepiecem down and then lets go of it
 
     }
@@ -190,7 +190,7 @@ public class Megalodog extends MegalodogChassis {
    myOpMode.sleep(wait);
 
     }
-    public void GrabandLift(int height, int wait){
+    public void HookAndLetGo (int height, int wait){
         //turn servo and raise lift
         Lift.setTargetPosition(height);
     myOpMode.sleep(wait);
