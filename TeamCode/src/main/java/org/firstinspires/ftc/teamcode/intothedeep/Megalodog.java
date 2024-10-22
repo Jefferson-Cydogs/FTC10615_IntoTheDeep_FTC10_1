@@ -133,12 +133,17 @@ public class Megalodog extends MegalodogChassis {
     public void TurnIntakeOn () {
 //It turns the continues servo forward
 
+        IntakeBoxServo.setPower(continuousIntakePower);
+        myOpMode.sleep(500);;
+    IntakeBoxServo.setPower(0);
     }
-    public void TurnIntakeOff () {
-//It turns the continues servo off
-
+    public void ReverseIntake () {
+//It turns the continues servo reverse
+        IntakeBoxServo.setPower(-continuousIntakePower);
+        myOpMode.sleep(500);
+        IntakeBoxServo.setPower(0);
     }
-    public void GrabSpeicen (int waitime) {
+    public void GrabSpeicem (int waitime) {
 //The servo rotates forward
 
     }
@@ -149,11 +154,26 @@ public class Megalodog extends MegalodogChassis {
 
     public void MoveSlideAndScoop (int distanceMM,int wait){};
 
-    public void RaiseLift (int hightMM, int wait){};
 
-    public void EmptyLift (int wait){};
+    public void RaiseLift (int hightMM, int wait){
 
-    public void LetGoOfSpecimen(int wait){};
+        Lift.setTargetPosition(hightMM);
+        myOpMode.sleep(wait);
+
+    };
+
+    public void EmptyBox (int wait){
+
+        deliveryBoxServoPosition = deliveryServoDump;
+    myOpMode.sleep(wait);
+    };
+
+    public void LetGoOfSpecimen(int wait){
+        specimenServoPosition =specimenServoOpen;
+        SpecimenGripperServo.setPosition(specimenServoPosition);
+        myOpMode.sleep(wait);
+
+    };
 
     public void CheckSampleColor (){};
 
@@ -163,11 +183,19 @@ public class Megalodog extends MegalodogChassis {
     public void RealeaseIntoBucket(int wait){
         //spin servo opposite
     }
-    public void Returnlift(int wait){
+    public void Downift(int wait){
         //turn motor
+        deliveryBoxServoPosition = deliveryServoHome;
+        DeliveryBoxServo.setPosition(deliveryBoxServoPosition);
+   myOpMode.sleep(wait);
+
     }
     public void GrabandLift(int height, int wait){
         //turn servo and raise lift
+        Lift.setTargetPosition(height);
+    myOpMode.sleep(wait);
+    LetGoOfSpecimen(250);
+    myOpMode.sleep(wait);
     }
 }
 
