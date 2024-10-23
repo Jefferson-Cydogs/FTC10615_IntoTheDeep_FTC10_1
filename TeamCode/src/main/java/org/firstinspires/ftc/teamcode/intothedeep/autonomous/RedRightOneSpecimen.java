@@ -37,7 +37,7 @@ public class RedRightOneSpecimen extends LinearOpMode {
             myBot.MoveStraight(-730,.20,500);
             // 2: Hang specimen
             sleep(2000);
-myBot.HookAndLetGo(1050, 1000);
+myBot.HookAndLetGo(850, 1000);
             // 3: Move backwards
             //myBot.MoveStraight(70,.25,500);
           //  myBot.RaiseLift(-1400, 500);
