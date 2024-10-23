@@ -22,25 +22,28 @@ public class RedRightOneSpecimen extends LinearOpMode {
         // this lets us see how long the op mode has run
 
         Megalodog myBot = new Megalodog(this);
-        myBot.InitializeDevices();
+        myBot.initializeDevices();
         // Put code that should run during initialization HERE in this area
 
         // Wait for the start button to be pressed on the driver station
         waitForStart();
 
         if (opModeIsActive()) {
-            // Put code that should run during the active mode HERE in this area
-            myBot.InitializePositions();
-            // 1: Strafe left
-            myBot.StrafeLeft(-400,.3,1000);
-            // 2: Move forward
-            myBot.MoveStraight(-550,.3,500);
-            // 3: Hang specimen
+            //            // Put code that sould run during the active mode HERE in this area
+            //myBot.InitializePositions();
+           myBot.RaiseLift (1350,500);
 
-            // 4: Move backwards
-            myBot.MoveStraight(470,.3,500);
-            // 5: Strafe Right
-            myBot.StrafeRight(-800, 0.3, 1000);
+            // 1: Move forward
+            myBot.MoveStraight(-730,.20,500);
+            // 2: Hang specimen
+            sleep(2000);
+myBot.HookAndLetGo(1050, 1000);
+            // 3: Move backwards
+            //myBot.MoveStraight(70,.25,500);
+          //  myBot.RaiseLift(-1400, 500);
+           // myBot.MoveStraight(400,.25 ,500);
+            // 4: Strafe Right
+          //  myBot.StrafeRight(-800, 0.25, 1000);
             // Advanced (from where we drop specimen): Strafe right, grab first sample (closest one)
             // Rotate right, strafe left, drop sample, move backwards
 

@@ -65,7 +65,7 @@ public class Megalodog extends MegalodogChassis {
         SpecimenGripperServo.setPosition(specimenServoPosition);
     }
 
-    private void initializeDevices()
+    public void initializeDevices()
     {
         ExtensionServo = myOpMode.hardwareMap.get(Servo.class, "Extension");
         DeliveryBoxServo = myOpMode.hardwareMap.get(Servo.class, "DeliveryBox");
