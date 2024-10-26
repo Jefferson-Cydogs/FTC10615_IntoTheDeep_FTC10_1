@@ -138,8 +138,8 @@ public class Config_Motor extends LinearOpMode {
 
             if (gamepad1.dpad_up) {
                 motorTargetPosition += 100;
-                if (motorTargetPosition > 3000) {
-                    motorTargetPosition = 3000;
+                if (motorTargetPosition > 6000) {
+                    motorTargetPosition = 6000;
                     telemetry.addLine("Motor target position at maximum(3000)");
                 }
                 updated = true;
@@ -156,8 +156,8 @@ public class Config_Motor extends LinearOpMode {
             }
             if(gamepad1.dpad_right){
                 motorTargetPosition+=10;
-                if(motorTargetPosition>3000){
-                    motorTargetPosition = 3000;
+                if(motorTargetPosition>6000){
+                    motorTargetPosition = 6000;
                     telemetry.addLine("Motor target position at maximum(3000)");
                 }
                 updated=true;

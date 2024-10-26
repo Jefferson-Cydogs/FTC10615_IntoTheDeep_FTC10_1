@@ -19,6 +19,8 @@ public class MegalodogChassis {
 
     // mmPer90DegreeRotation needs to be configured for each robot based on it's chassis size
     private double mmPer90DegreeRotation=454.22;
+
+    private double strafeCompensation = 1.081;
     public enum Direction {LEFT, CENTER, RIGHT}
     public enum Alliance {BLUE, RED}
 
@@ -95,7 +97,7 @@ public class MegalodogChassis {
         double TicksToTarget;
         double TicksPerSecond;
 
-        TicksToTarget = (mmToTarget / (WheelDiameter * Math.PI)) * ticksPerRevolution;
+        TicksToTarget = (mmToTarget / (WheelDiameter * Math.PI)) * ticksPerRevolution*strafeCompensation;
         TicksPerSecond = ((VelocityPercentage * RPM) / 60) * ticksPerRevolution;
         FrontLeftWheel.setTargetPosition((int) (FrontLeftWheel.getCurrentPosition() + TicksToTarget));
         FrontRightWheel.setTargetPosition((int) (FrontRightWheel.getCurrentPosition() - TicksToTarget));

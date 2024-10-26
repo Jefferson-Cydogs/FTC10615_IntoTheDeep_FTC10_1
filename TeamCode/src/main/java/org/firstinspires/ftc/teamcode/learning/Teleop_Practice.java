@@ -9,29 +9,12 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.core.EventTracker;
+import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
+
 // switch fast and slow drive
 @TeleOp
 public class Teleop_Practice extends LinearOpMode {
-    private int extensionSliderMax = 1300;
-    private int liftLowerBasket = 850;
-    private int liftUpperBasket = 2700;
-    private int liftLowerSpecimenBar = 500;
-    private int liftUpperSpecimenBar = 2000;
-    private int liftSnapSpecimen = 200;
-    private int liftGetSpecimenFromWall = 500;
-    private int liftHangOnLowerBar = 2000;
-    private int liftHangOnUpperBar = 1000;
-    //private double extensionServoHome = 0.72;
-    private double extensionServoFloor = 0.905;
-    private double extensionServoDump = 0.24;
-    private double deliveryServoHome = 0.35;
-    private double deliveryServoDump = 0.94;
-    private double specimenServoOpen = 0.4;
-    private double specimenServoClosed = 0.51;
-    private double specimenServoStarting = 0.51;
-    private double continuousIntakePower = 0.8;
-    private double gripperRotatorStarting = 0.49;
-    private double gripperRotatorDeployed = 0.86;
+
     private DcMotor BackLeftWheel;
     private DcMotor FrontLeftWheel;
     private DcMotor BackRightWheel;
@@ -48,7 +31,7 @@ public class Teleop_Practice extends LinearOpMode {
     private CRServo IntakeBoxServo;
     public Servo SpecimenGripperServo;
     private double extensionServoPosition;
-    private double extensionServoSafetyPosition = 0.7;
+
     private double deliveryBoxServoPosition;
     private double specimenServoPosition;
     private float gamepad1_RightStickYValue;
@@ -124,65 +107,65 @@ public class Teleop_Practice extends LinearOpMode {
 
         if (gamepad2.triangle) {
             checkExtensionServoSafety();
-            deliveryBoxServoPosition = deliveryServoDump;
+            deliveryBoxServoPosition = Megalodog.deliveryServoDump;
             DeliveryBoxServo.setPosition(deliveryBoxServoPosition);
         } else if (gamepad2.cross) {
             checkExtensionServoSafety();
-            deliveryBoxServoPosition = deliveryServoHome;
+            deliveryBoxServoPosition = Megalodog.deliveryServoHome;
             DeliveryBoxServo.setPosition(deliveryBoxServoPosition);
         }
 
         if (gamepad2.right_trigger>0.4) {
-            IntakeBoxServo.setPower(continuousIntakePower);
+            IntakeBoxServo.setPower(Megalodog.continuousIntakePower);
         }
         else if(gamepad2.left_trigger>0.4) {
-            IntakeBoxServo.setPower(-continuousIntakePower);
+            IntakeBoxServo.setPower(-Megalodog.continuousIntakePower);
         }
         else {
             IntakeBoxServo.setPower(0);
         }
 
         if(gamepad2.right_bumper){
-            specimenServoPosition =specimenServoClosed;
+            specimenServoPosition =Megalodog.specimenServoClosed;
             SpecimenGripperServo.setPosition(specimenServoPosition);
         }
 
         if(gamepad2.left_bumper){
-            specimenServoPosition =specimenServoOpen;
+            specimenServoPosition =Megalodog.specimenServoOpen;
             SpecimenGripperServo.setPosition(specimenServoPosition);
         }
         if (gamepad2.dpad_down) {
             checkExtensionServoSafety();
-            deliveryBoxServoPosition = deliveryServoHome;
+            deliveryBoxServoPosition = Megalodog.deliveryServoHome;
             DeliveryBoxServo.setPosition(deliveryBoxServoPosition);
             Lift.setTargetPosition(30);
         } else if (gamepad2.dpad_left) {
             checkExtensionServoSafety();
-            Lift.setTargetPosition(liftLowerBasket);
+            Lift.setTargetPosition(Megalodog.liftLowerBasket);
         } else if (gamepad2.dpad_up) {
             checkExtensionServoSafety();
-            Lift.setTargetPosition(liftUpperBasket);
+            Lift.setTargetPosition(Megalodog.liftUpperBasket);
         } else if (gamepad2.dpad_right) {
             checkExtensionServoSafety();
-            Lift.setTargetPosition(liftUpperSpecimenBar);
+            Lift.setTargetPosition(Megalodog.liftUpperSpecimenBar);
         }
         if(-gamepad2.right_stick_y > 0.2)
         {
             if(checkIsLiftDown() && checkIsExtensionHome()) {
-                extensionServoPosition = extensionServoDump;
+                extensionServoPosition = Megalodog.extensionServoDump;
                 ExtensionServo.setPosition(extensionServoPosition);
             }
         }
         if(-gamepad2.right_stick_y < -0.2)
         {
 
-            ExtensionServo.setPosition(extensionServoFloor);
+            ExtensionServo.setPosition(Megalodog.extensionServoFloor);
         }
         if(-gamepad2.left_stick_y > 0.2)
         {
             if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.10))
             {
-                if (extensionSliderPosition < extensionSliderMax-99) {
+                if (extensionSliderPosition < Megalodog.extensionSliderMax-99) {
                     ExtensionServo.setPosition(0.6);
                     extensionSliderPosition += 100;
                     ExtensionSlider.setTargetPosition(extensionSliderPosition);
@@ -212,12 +195,12 @@ public class Teleop_Practice extends LinearOpMode {
 
     private void initializePositions()
     {
-        extensionServoPosition = extensionServoFloor;
+        extensionServoPosition = Megalodog.extensionServoFloor;
         ExtensionServo.setPosition(extensionServoPosition);
-        deliveryBoxServoPosition = deliveryServoHome;
-        DeliveryBoxServo.setPosition(deliveryServoHome);
-        SpecimenGripperServo.setPosition(specimenServoStarting);
-        GripperRotatorServo.setPosition(gripperRotatorDeployed);
+        deliveryBoxServoPosition = Megalodog.deliveryServoHome;
+        DeliveryBoxServo.setPosition(Megalodog.deliveryServoHome);
+        SpecimenGripperServo.setPosition(Megalodog.specimenServoStarting);
+        GripperRotatorServo.setPosition(Megalodog.gripperRotatorDeployed);
 
     }
 
@@ -356,15 +339,15 @@ public class Teleop_Practice extends LinearOpMode {
 
     private void checkExtensionServoSafety()
     {
-        if(ExtensionServo.getPosition() < extensionServoSafetyPosition)
+        if(ExtensionServo.getPosition() < Megalodog.extensionServoSafetyPosition)
         {
-            ExtensionServo.setPosition(extensionServoSafetyPosition);
+            ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
         }
     }
 
     private boolean checkIsLiftDown()
     {
-        return (Lift.getCurrentPosition() < 150 && DeliveryBoxServo.getPosition() < deliveryServoHome+0.05);
+        return (Lift.getCurrentPosition() < 150 && DeliveryBoxServo.getPosition() < Megalodog.deliveryServoHome+0.05);
     }
     private boolean checkIsExtensionHome()
     {

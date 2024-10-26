@@ -22,38 +22,60 @@ public class RedLeftOneSample extends LinearOpMode {
     @Override
     public void runOpMode() {
 
+        double autonSpeed = 0.35;
+        int deliveryBoxDumpWaitTime = 1100;
+
         // this lets us see how long the op mode has run
 
         Megalodog myBot = new Megalodog(this);
+        myBot.InitializeDevices();
         // Put code that should run during initialization HERE in this area
 
         // Wait for the start button to be pressed on the driver station
         waitForStart();
 
         if (opModeIsActive()) {
-            // Put code that should run during the active mode HERE in this area
 
-            // 1: Drive forward
-            myBot.MoveStraight(75,.3,400);
-            // 2: Rotate left 90 degrees
-            myBot.RotateLeft(90,.3,400);
-            // 3: Drive forward
-            myBot.MoveStraight(690,.3,400);
-            // 4: Rotate left 45 degrees
-            myBot.RotateRight(45,.3,400);
-            // 5: Drop sample
+            // 1st sample
+            myBot.InitializePositions(true, false);
+            myBot.RaiseLift(Megalodog.liftUpperBasket,1300);
+            myBot.MoveStraight(-145,.2, 200);
+            myBot.DumpDeliveryBox(deliveryBoxDumpWaitTime);
+            myBot.MoveStraight(85,autonSpeed,100);
+            myBot.LiftMoveToHome(600);
 
-            // 6: Rotate right 45 degrees
-            myBot.RotateLeft(45,.3,400);
-            // 7: Drive backwards
-            myBot.MoveStraight(-670,.3,400);
-            // 8: Strafe right to low chamber
-            myBot.StrafeRight(920,.3,400);
-            // 9: Rotate 90 degrees right
-            myBot.RotateLeft(90,.3,400);
-            // 10: Touch low chamber close to left side
-            myBot.MoveStraight(100,.3,400);
-            // pts:11 w/ mechanisms
+            // 2nd sample
+            myBot.StrafeLeft(50,autonSpeed,200);
+            myBot.RotateLeft(90,autonSpeed,300);
+            myBot.MoveStraight(345,autonSpeed,300);
+            myBot.ScootAndScoop(200);
+            myBot.RotateRight(20,autonSpeed,200);
+            myBot.ExchangeServoRaise(200);
+            myBot.MoveStraight(-500,.4,100);
+            myBot.ExchangeSample(0);
+            myBot.RotateRight(22,autonSpeed,100);
+            myBot.StrafeRight(62,autonSpeed,100);
+            myBot.RaiseLift(Megalodog.liftUpperBasket,1700);
+            myBot.DumpDeliveryBox(deliveryBoxDumpWaitTime);
+            myBot.MoveStraight(115,autonSpeed,200);
+            myBot.LiftMoveToHome(1000);
+
+            // third sample
+            myBot.RotateLeft(58,autonSpeed,200);
+            myBot.MoveStraight(240,.4,300);
+            myBot.ScootAndScoop(200);
+            myBot.RotateRight(35,autonSpeed,100);
+            myBot.ExchangeServoRaise(200);
+            myBot.StrafeRight(50,autonSpeed,300);
+            myBot.MoveStraight(-400,autonSpeed,0);
+            myBot.ExchangeSample(100);
+            myBot.RaiseLift(Megalodog.liftUpperBasket,2200);
+            myBot.DumpDeliveryBox(deliveryBoxDumpWaitTime);
+            myBot.LiftMoveToHome(1000);
+            sleep(2000);
+
+          //  sleep(1000);
+
 
         }
     }
