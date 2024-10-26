@@ -12,22 +12,26 @@ import org.firstinspires.ftc.teamcode.core.EventTracker;
 // switch fast and slow drive
 @TeleOp
 public class Teleop_Practice extends LinearOpMode {
-    private int extensionSliderMax = 3000;
-    private int liftLowerBasket = 900;
-    private int liftUpperBasket = 2800;
+    private int extensionSliderMax = 1300;
+    private int liftLowerBasket = 850;
+    private int liftUpperBasket = 2700;
     private int liftLowerSpecimenBar = 500;
     private int liftUpperSpecimenBar = 2000;
     private int liftSnapSpecimen = 200;
     private int liftGetSpecimenFromWall = 500;
     private int liftHangOnLowerBar = 2000;
     private int liftHangOnUpperBar = 1000;
-    private double extensionServoHome = 0.72;
-    private double extensionServoDump = 0.1;
-    private double deliveryServoHome = 0.3;
-    private double deliveryServoDump = 0.95;
-    private double specimenServoOpen = 0;
-    private double specimenServoClosed = 0.8;
+    //private double extensionServoHome = 0.72;
+    private double extensionServoFloor = 0.905;
+    private double extensionServoDump = 0.24;
+    private double deliveryServoHome = 0.35;
+    private double deliveryServoDump = 0.94;
+    private double specimenServoOpen = 0.4;
+    private double specimenServoClosed = 0.51;
+    private double specimenServoStarting = 0.51;
     private double continuousIntakePower = 0.8;
+    private double gripperRotatorStarting = 0.49;
+    private double gripperRotatorDeployed = 0.86;
     private DcMotor BackLeftWheel;
     private DcMotor FrontLeftWheel;
     private DcMotor BackRightWheel;
@@ -40,10 +44,11 @@ public class Teleop_Practice extends LinearOpMode {
     private TouchSensor LiftLimit2;
     private Servo ExtensionServo;
     private Servo DeliveryBoxServo;
+    private Servo GripperRotatorServo;
     private CRServo IntakeBoxServo;
     public Servo SpecimenGripperServo;
     private double extensionServoPosition;
-    private double extensionServoSafetyPosition = 0.5;
+    private double extensionServoSafetyPosition = 0.7;
     private double deliveryBoxServoPosition;
     private double specimenServoPosition;
     private float gamepad1_RightStickYValue;
@@ -65,12 +70,18 @@ public class Teleop_Practice extends LinearOpMode {
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
      */
+    // extensionIntake
+    //    floor  .81
+    //    above submerssible bar   .7
+    //    dump .2
+    //    starting position
+
     @Override
     public void runOpMode() {
 
         initializeWheels();
         initializeDevices();
-        initializePositions();
+
 
         currentTimer = new ElapsedTime();
 
@@ -80,6 +91,7 @@ public class Teleop_Practice extends LinearOpMode {
         waitForStart();
         if (opModeIsActive()) {
             // RUN BLOCKS:
+            initializePositions();
             while (opModeIsActive()) {
 
                 // LOOP BLOCKS:
@@ -108,17 +120,9 @@ public class Teleop_Practice extends LinearOpMode {
     }
     private void manageManipulatorControls()
     {
-        if (gamepad2.square) {
-            if(checkIsLiftDown() && checkIsExtensionHome()) {
-                extensionServoPosition = extensionServoDump;
-                ExtensionServo.setPosition(extensionServoPosition);
-            }
-        } else if (gamepad2.triangle) {
-            extensionServoPosition = extensionServoHome;
-            ExtensionServo.setPosition(extensionServoPosition);
-        }
+        // square and circle are unused
 
-        if (gamepad2.circle) {
+        if (gamepad2.triangle) {
             checkExtensionServoSafety();
             deliveryBoxServoPosition = deliveryServoDump;
             DeliveryBoxServo.setPosition(deliveryBoxServoPosition);
@@ -162,12 +166,23 @@ public class Teleop_Practice extends LinearOpMode {
             checkExtensionServoSafety();
             Lift.setTargetPosition(liftUpperSpecimenBar);
         }
+        if(-gamepad2.right_stick_y > 0.2)
+        {
+            if(checkIsLiftDown() && checkIsExtensionHome()) {
+                extensionServoPosition = extensionServoDump;
+                ExtensionServo.setPosition(extensionServoPosition);
+            }
+        }
+        if(-gamepad2.right_stick_y < -0.2)
+        {
 
+            ExtensionServo.setPosition(extensionServoFloor);
+        }
         if(-gamepad2.left_stick_y > 0.2)
         {
             if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.10))
             {
-                if (extensionSliderPosition < extensionSliderMax) {
+                if (extensionSliderPosition < extensionSliderMax-99) {
                     ExtensionServo.setPosition(0.6);
                     extensionSliderPosition += 100;
                     ExtensionSlider.setTargetPosition(extensionSliderPosition);
@@ -197,12 +212,12 @@ public class Teleop_Practice extends LinearOpMode {
 
     private void initializePositions()
     {
-        extensionServoPosition = extensionServoHome;
+        extensionServoPosition = extensionServoFloor;
         ExtensionServo.setPosition(extensionServoPosition);
         deliveryBoxServoPosition = deliveryServoHome;
         DeliveryBoxServo.setPosition(deliveryServoHome);
-        specimenServoPosition = specimenServoOpen;
-        SpecimenGripperServo.setPosition(specimenServoPosition);
+        SpecimenGripperServo.setPosition(specimenServoStarting);
+        GripperRotatorServo.setPosition(gripperRotatorDeployed);
 
     }
 
@@ -277,12 +292,15 @@ public class Teleop_Practice extends LinearOpMode {
         DeliveryBoxServo = hardwareMap.get(Servo.class, "DeliveryBox");
         IntakeBoxServo = hardwareMap.get(CRServo.class, "IntakeBox");
         SpecimenGripperServo = hardwareMap.get(Servo.class,"SpecimenGripper");
+        GripperRotatorServo = hardwareMap.get(Servo.class,"GripperRotator");
         ExtensionSlider = hardwareMap.get(DcMotor.class, "IntakeExtension");
         Lift = hardwareMap.get(DcMotor.class, "Lift");
         ExtensionLimit = hardwareMap.get(TouchSensor.class, "ExtensionLimit");
         LiftLimit = hardwareMap.get(TouchSensor.class, "LiftLimit");
         LiftLimit2 = hardwareMap.get(TouchSensor.class, "LiftLimit2");
 
+        SpecimenGripperServo.setDirection(Servo.Direction.REVERSE);
+        GripperRotatorServo.setDirection(Servo.Direction.REVERSE);
         resetExtensionSlider(3000);
 
         resetLift();
@@ -346,7 +364,7 @@ public class Teleop_Practice extends LinearOpMode {
 
     private boolean checkIsLiftDown()
     {
-        return (Lift.getCurrentPosition() < 150 && DeliveryBoxServo.getPosition() == deliveryServoHome);
+        return (Lift.getCurrentPosition() < 150 && DeliveryBoxServo.getPosition() < deliveryServoHome+0.05);
     }
     private boolean checkIsExtensionHome()
     {

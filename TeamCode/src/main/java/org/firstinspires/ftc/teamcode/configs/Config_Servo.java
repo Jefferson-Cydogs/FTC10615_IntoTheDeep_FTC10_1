@@ -30,7 +30,7 @@ public class Config_Servo extends LinearOpMode {
     private boolean updated = false;
 
     //Define the inital servoPosition
-    private double servoPosition = 0.3;
+    private double servoPosition = 0.5;
 
     //Timer for optional servo select time out
     private ElapsedTime selectionTimer = new ElapsedTime();
@@ -40,8 +40,8 @@ public class Config_Servo extends LinearOpMode {
 
         //Initialize the servos with error handling
         servo1 = initalizeServo("Extension");
-        servo2 = initalizeServo("DeliveryBox");
-        servo3 = initalizeServo("SpecimenGripper");
+       servo2 = initalizeServo("DeliveryBox");
+        servo3 = initalizeServo("GripperRotator");
         // if (!initalizeServo("servo2")) return;
         // if (!initalizeServo("servo3")) return;
         //if (!initalizeServo("servo4")) return;
@@ -51,6 +51,7 @@ public class Config_Servo extends LinearOpMode {
         servo1.setPosition(servoPosition);
         servo2.setPosition(servoPosition);
         servo3.setPosition(servoPosition);
+        servo3.setDirection(Servo.Direction.REVERSE);
         //servo4.setPosition(servoPosition);
 
         //Wait for driver presses play
@@ -58,11 +59,11 @@ public class Config_Servo extends LinearOpMode {
 
         //Display selection Instructions during Intialzation
         telemetry.addLine("Select Servo to Test using PlayStation Controller Buttons.")
-                .addData("Cross(X)", "Extension")
-                .addData("Circle(O)", "Delivery Box")
-                .addData("Square(N)", "Specimen Gripper")
-                .addData("Triangle(A)", "Servo 4")
-                .addData("Current Selection", selectedServoName);
+                .addData("\nCross(X)", "Extension")
+                .addData("\nCircle(O)", "Delivery Box")
+                .addData("\nSquare(N)", "Specimen Gripper")
+                .addData("\nTriangle(A)", "Servo 4")
+                .addData("\nCurrent Selection", selectedServoName);
         telemetry.update();
 
 
