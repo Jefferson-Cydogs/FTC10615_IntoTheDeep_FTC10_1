@@ -103,8 +103,14 @@ public class Teleop_Practice extends LinearOpMode {
     }
     private void manageManipulatorControls()
     {
-        // square and circle are unused
-
+        if(gamepad2.square)
+        {
+            GripperRotatorServo.setPosition(Megalodog.gripperRotatorStarting);
+        }
+        if(gamepad2.circle)
+        {
+            GripperRotatorServo.setPosition(Megalodog.gripperRotatorDeployed);
+        }
         if (gamepad2.triangle) {
             checkExtensionServoSafety();
             deliveryBoxServoPosition = Megalodog.deliveryServoDump;
@@ -151,7 +157,8 @@ public class Teleop_Practice extends LinearOpMode {
         }
         if(-gamepad2.right_stick_y > 0.2)
         {
-            if(checkIsLiftDown() && checkIsExtensionHome()) {
+            //if(checkIsLiftDown() && checkIsExtensionHome()) {
+            if(checkIsLiftDown()) {
                 extensionServoPosition = Megalodog.extensionServoDump;
                 ExtensionServo.setPosition(extensionServoPosition);
             }
@@ -166,7 +173,7 @@ public class Teleop_Practice extends LinearOpMode {
             if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.10))
             {
                 if (extensionSliderPosition < Megalodog.extensionSliderMax-99) {
-                    ExtensionServo.setPosition(0.6);
+                    ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
                     extensionSliderPosition += 100;
                     ExtensionSlider.setTargetPosition(extensionSliderPosition);
                 }
@@ -176,7 +183,7 @@ public class Teleop_Practice extends LinearOpMode {
         {
             if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.10)) {
                 if (extensionSliderPosition > 100) {
-                    ExtensionServo.setPosition(0.6);
+                    ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
                     extensionSliderPosition -= 100;
                     if(extensionSliderPosition < 150)
                     {
@@ -200,7 +207,7 @@ public class Teleop_Practice extends LinearOpMode {
         deliveryBoxServoPosition = Megalodog.deliveryServoHome;
         DeliveryBoxServo.setPosition(Megalodog.deliveryServoHome);
         SpecimenGripperServo.setPosition(Megalodog.specimenServoStarting);
-        GripperRotatorServo.setPosition(Megalodog.gripperRotatorDeployed);
+        GripperRotatorServo.setPosition(Megalodog.gripperRotatorStarting);
 
     }
 
@@ -213,15 +220,15 @@ public class Teleop_Practice extends LinearOpMode {
         gamepad1_TriggersValue = gamepad1.right_trigger - gamepad1.left_trigger;
         if (gamepad1_RightStickYValue != 0 || gamepad1_RightStickXValue != 0 || gamepad1_LeftStickYValue != 0 || gamepad1_LeftStickXValue != 0 || gamepad1_TriggersValue != 0) {
             // Set robot's move forward(+) or backwards(-) power
-            Straight = lowSpeedDrive * (0.75 * Math.pow(gamepad1_RightStickYValue, 3) + 0.25 * gamepad1_RightStickYValue);
+            Straight = lowSpeedDrive * (0.75 * Math.pow(gamepad1_LeftStickYValue, 3) + 0.25 * gamepad1_LeftStickYValue);
             // Set robot's strafe right(+) or left(-) power
-            Strafe = lowSpeedDrive * (0.75 * Math.pow(gamepad1_RightStickXValue, 3) + 0.25 * gamepad1_RightStickXValue);
+            Strafe = lowSpeedDrive * (0.75 * Math.pow(gamepad1_LeftStickXValue, 3) + 0.25 * gamepad1_LeftStickXValue);
             // Set robot's clockwise(+) or counter-clockwise(-) rotation power
             Rotate = lowSpeedDrive * (0.75 * Math.pow(gamepad1_TriggersValue, 3) + 0.25 * gamepad1_TriggersValue);
             // Set robot's fast move forward(+) or backwards(-) power
-            FastStraight = highSpeedDrive * gamepad1_LeftStickYValue;
+            FastStraight = highSpeedDrive * gamepad1_RightStickYValue;
             // Set robot's fast strafe right(+) or left(-) power
-            FastStrafe = highSpeedDrive * gamepad1_LeftStickXValue;
+            FastStrafe = highSpeedDrive * gamepad1_RightStickXValue;
             BackLeftWheel.setPower((((Straight + FastStraight) - Strafe) - FastStrafe) + Rotate);
             BackRightWheel.setPower((Straight + FastStraight + Strafe + FastStrafe) - Rotate);
             FrontLeftWheel.setPower(Straight + FastStraight + Strafe + FastStrafe + Rotate);
@@ -310,7 +317,7 @@ public class Teleop_Practice extends LinearOpMode {
         ExtensionSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         ExtensionSlider.setTargetPosition(0);
         ExtensionSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        ExtensionSlider.setPower(0.4);
+        ExtensionSlider.setPower(0.6);
         extensionSliderPosition = 0;
     }
 
@@ -334,7 +341,7 @@ public class Teleop_Practice extends LinearOpMode {
         Lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Lift.setTargetPosition(0);
         Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Lift.setPower(0.6);
+        Lift.setPower(0.8);
     }
 
     private void checkExtensionServoSafety()

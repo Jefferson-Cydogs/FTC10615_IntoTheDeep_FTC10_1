@@ -23,8 +23,8 @@ public class Megalodog extends MegalodogChassis {
     public final static int liftHangOnUpperBar = 1000;
     // .89 was good when angled higher
     //  .93 was config servo at lower angle
-    public final static double extensionServoFloor = 0.940;
-    public final static double extensionServoDump = 0.24;
+    public final static double extensionServoFloor = 0.88;
+    public final static double extensionServoDump = 0.20;
     public final static double deliveryServoHome = 0.35;
     public final static double deliveryServoDump = 0.94;
     public final static double specimenServoOpen = 0.4;
@@ -33,7 +33,7 @@ public class Megalodog extends MegalodogChassis {
     public final static double continuousIntakePower = 0.4;
     public final static double gripperRotatorStarting = 0.49;
     public final static double gripperRotatorDeployed = 0.86;
-    public final static double extensionServoSafetyPosition = 0.7;
+    public final static double extensionServoSafetyPosition = 0.71;
     private double extensionServoPosition;
     private double deliveryBoxServoPosition;
     private double specimenServoPosition;
@@ -86,6 +86,7 @@ public class Megalodog extends MegalodogChassis {
     {
         if(openExtensionBox) {
             ExtensionServo.setPosition(extensionServoSafetyPosition);
+            myOpMode.sleep(100);
         }
         deliveryBoxServoPosition = Megalodog.deliveryServoHome;
         DeliveryBoxServo.setPosition(Megalodog.deliveryServoHome);
