@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.core.EventTracker;
 import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
 
 // switch fast and slow drive
-@TeleOp
+@TeleOp(name="The Final Countdown", group="Teleop")
 public class Teleop_Practice extends LinearOpMode {
 
     private DcMotor BackLeftWheel;
@@ -44,9 +44,11 @@ public class Teleop_Practice extends LinearOpMode {
     private double Rotate;
     private double FastStraight;
     private double FastStrafe;
-    private double highSpeedDrive = 0.6;
+    private double highSpeedDrive = 0.7;
     private double lowSpeedDrive = 0.3;
+    private double rotateSpeedDrive = 0.55;
     private int liftGoToPosition = 0;
+    private boolean triggerSpecimenGripperOpen = false;
 
     private ElapsedTime currentTimer;
     private EventTracker eventTracker;
@@ -94,7 +96,7 @@ public class Teleop_Practice extends LinearOpMode {
     {
         if(gamepad1.square)
         {
-            resetExtensionSlider(2000);
+            resetExtensionSlider(1000);
         }
         if(gamepad1.circle)
         {
@@ -103,22 +105,32 @@ public class Teleop_Practice extends LinearOpMode {
     }
     private void manageManipulatorControls()
     {
+        if(gamepad2.circle)  // left... 53 is starting 85 is closed
+        {
+            if(GripperRotatorServo.getPosition() > Megalodog.gripperRotatorDeployed - 0.1) {
+                GripperRotatorServo.setPosition(Megalodog.gripperRotatorStarting);
+            }
+            else {
+                GripperRotatorServo.setPosition(Megalodog.gripperRotatorDeployed);
+            }
+        }
         if(gamepad2.square)
         {
-            GripperRotatorServo.setPosition(Megalodog.gripperRotatorStarting);
+            Lift.setTargetPosition(Megalodog.liftPullSpecimenFromUpperBar);
+            //schedule an open of specimen gripper
+            triggerSpecimenGripperOpen = true;
         }
-        if(gamepad2.circle)
+        if(triggerSpecimenGripperOpen && Lift.getCurrentPosition() < Megalodog.liftPullSpecimenFromUpperBar-30)
         {
-            GripperRotatorServo.setPosition(Megalodog.gripperRotatorDeployed);
+            SpecimenGripperServo.setPosition(Megalodog.specimenServoOpen);
+            triggerSpecimenGripperOpen = false;
         }
         if (gamepad2.triangle) {
             checkExtensionServoSafety();
-            deliveryBoxServoPosition = Megalodog.deliveryServoDump;
-            DeliveryBoxServo.setPosition(deliveryBoxServoPosition);
+            DeliveryBoxServo.setPosition(Megalodog.deliveryServoDump);
         } else if (gamepad2.cross) {
             checkExtensionServoSafety();
-            deliveryBoxServoPosition = Megalodog.deliveryServoHome;
-            DeliveryBoxServo.setPosition(deliveryBoxServoPosition);
+            DeliveryBoxServo.setPosition(Megalodog.deliveryServoHome);
         }
 
         if (gamepad2.right_trigger>0.4) {
@@ -132,13 +144,11 @@ public class Teleop_Practice extends LinearOpMode {
         }
 
         if(gamepad2.right_bumper){
-            specimenServoPosition =Megalodog.specimenServoClosed;
-            SpecimenGripperServo.setPosition(specimenServoPosition);
+            SpecimenGripperServo.setPosition(Megalodog.specimenServoClosed);
         }
 
         if(gamepad2.left_bumper){
-            specimenServoPosition =Megalodog.specimenServoOpen;
-            SpecimenGripperServo.setPosition(specimenServoPosition);
+            SpecimenGripperServo.setPosition(Megalodog.specimenServoOpen);
         }
         if (gamepad2.dpad_down) {
             checkExtensionServoSafety();
@@ -159,13 +169,11 @@ public class Teleop_Practice extends LinearOpMode {
         {
             //if(checkIsLiftDown() && checkIsExtensionHome()) {
             if(checkIsLiftDown()) {
-                extensionServoPosition = Megalodog.extensionServoDump;
-                ExtensionServo.setPosition(extensionServoPosition);
+                ExtensionServo.setPosition(Megalodog.extensionServoDump);
             }
         }
         if(-gamepad2.right_stick_y < -0.2)
         {
-
             ExtensionServo.setPosition(Megalodog.extensionServoFloor);
         }
         if(-gamepad2.left_stick_y > 0.2)
@@ -202,8 +210,8 @@ public class Teleop_Practice extends LinearOpMode {
 
     private void initializePositions()
     {
-        extensionServoPosition = Megalodog.extensionServoFloor;
-        ExtensionServo.setPosition(extensionServoPosition);
+
+        ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
         deliveryBoxServoPosition = Megalodog.deliveryServoHome;
         DeliveryBoxServo.setPosition(Megalodog.deliveryServoHome);
         SpecimenGripperServo.setPosition(Megalodog.specimenServoStarting);
@@ -218,13 +226,17 @@ public class Teleop_Practice extends LinearOpMode {
         gamepad1_LeftStickYValue = -gamepad1.left_stick_y;
         gamepad1_LeftStickXValue = gamepad1.left_stick_x;
         gamepad1_TriggersValue = gamepad1.right_trigger - gamepad1.left_trigger;
+        if(Math.abs(gamepad1_RightStickYValue) > 0.2)
+        {
+            checkExtensionBoxForDrive();
+        }
         if (gamepad1_RightStickYValue != 0 || gamepad1_RightStickXValue != 0 || gamepad1_LeftStickYValue != 0 || gamepad1_LeftStickXValue != 0 || gamepad1_TriggersValue != 0) {
             // Set robot's move forward(+) or backwards(-) power
             Straight = lowSpeedDrive * (0.75 * Math.pow(gamepad1_LeftStickYValue, 3) + 0.25 * gamepad1_LeftStickYValue);
             // Set robot's strafe right(+) or left(-) power
             Strafe = lowSpeedDrive * (0.75 * Math.pow(gamepad1_LeftStickXValue, 3) + 0.25 * gamepad1_LeftStickXValue);
             // Set robot's clockwise(+) or counter-clockwise(-) rotation power
-            Rotate = lowSpeedDrive * (0.75 * Math.pow(gamepad1_TriggersValue, 3) + 0.25 * gamepad1_TriggersValue);
+            Rotate = rotateSpeedDrive * (0.75 * Math.pow(gamepad1_TriggersValue, 3) + 0.25 * gamepad1_TriggersValue);
             // Set robot's fast move forward(+) or backwards(-) power
             FastStraight = highSpeedDrive * gamepad1_RightStickYValue;
             // Set robot's fast strafe right(+) or left(-) power
@@ -354,10 +366,17 @@ public class Teleop_Practice extends LinearOpMode {
 
     private boolean checkIsLiftDown()
     {
-        return (Lift.getCurrentPosition() < 150 && DeliveryBoxServo.getPosition() < Megalodog.deliveryServoHome+0.05);
+        return (Lift.getCurrentPosition() < 150 && DeliveryBoxServo.getPosition() < Megalodog.deliveryServoHome+0.1);
     }
     private boolean checkIsExtensionHome()
     {
         return (ExtensionSlider.getCurrentPosition() < 100);
+    }
+    private void checkExtensionBoxForDrive()
+    {
+        if(ExtensionServo.getPosition() > Megalodog.extensionServoSafetyPosition + 0.04)
+        {
+            ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
+        }
     }
 }

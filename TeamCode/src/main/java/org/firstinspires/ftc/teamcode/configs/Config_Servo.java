@@ -40,8 +40,9 @@ public class Config_Servo extends LinearOpMode {
 
         //Initialize the servos with error handling
         servo1 = initalizeServo("Extension");
-       servo2 = initalizeServo("DeliveryBox");
+        servo2 = initalizeServo("DeliveryBox");
         servo3 = initalizeServo("GripperRotator");
+        servo4 = initalizeServo("SpecimenGripper");
         // if (!initalizeServo("servo2")) return;
         // if (!initalizeServo("servo3")) return;
         //if (!initalizeServo("servo4")) return;
@@ -52,6 +53,8 @@ public class Config_Servo extends LinearOpMode {
         servo2.setPosition(servoPosition);
         servo3.setPosition(servoPosition);
         servo3.setDirection(Servo.Direction.REVERSE);
+        servo4.setPosition(servoPosition);
+        servo4.setDirection(Servo.Direction.REVERSE);
         //servo4.setPosition(servoPosition);
 
         //Wait for driver presses play
@@ -61,8 +64,8 @@ public class Config_Servo extends LinearOpMode {
         telemetry.addLine("Select Servo to Test using PlayStation Controller Buttons.")
                 .addData("\nCross(X)", "Extension")
                 .addData("\nCircle(O)", "Delivery Box")
-                .addData("\nSquare(N)", "Specimen Gripper")
-                .addData("\nTriangle(A)", "Servo 4")
+                .addData("\nSquare(N)", "Specimen Gripper Rotator")
+                .addData("\nTriangle(A)", "Specimen Gripper")
                 .addData("\nCurrent Selection", selectedServoName);
         telemetry.update();
 
@@ -237,5 +240,7 @@ public class Config_Servo extends LinearOpMode {
             return null;
         }
     }
+
+
 }
 

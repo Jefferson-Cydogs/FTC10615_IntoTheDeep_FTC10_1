@@ -17,22 +17,23 @@ public class Megalodog extends MegalodogChassis {
     public final static int liftUpperBasket = 4700;
     public final static int liftLowerSpecimenBar = 500;
     public final static int liftUpperSpecimenBar = 2600;
+    public final static int liftPullSpecimenFromUpperBar = 1600;
     public final static int liftSnapSpecimen = 200;
     public final static int liftGetSpecimenFromWall = 500;
     public final static int liftHangOnLowerBar = 2000;
     public final static int liftHangOnUpperBar = 1000;
     // .89 was good when angled higher
     //  .93 was config servo at lower angle
-    public final static double extensionServoFloor = 0.88;
+    public final static double extensionServoFloor = 0.87;
     public final static double extensionServoDump = 0.20;
     public final static double deliveryServoHome = 0.35;
     public final static double deliveryServoDump = 0.94;
-    public final static double specimenServoOpen = 0.4;
-    public final static double specimenServoClosed = 0.51;
-    public final static double specimenServoStarting = 0.51;
+    public final static double specimenServoOpen = 0.21;
+    public final static double specimenServoClosed = 0.45;
+    public final static double specimenServoStarting = 0.4;
     public final static double continuousIntakePower = 0.4;
-    public final static double gripperRotatorStarting = 0.49;
-    public final static double gripperRotatorDeployed = 0.86;
+    public final static double gripperRotatorStarting = 0.53;
+    public final static double gripperRotatorDeployed = 0.85;
     public final static double extensionServoSafetyPosition = 0.71;
     private double extensionServoPosition;
     private double deliveryBoxServoPosition;
@@ -147,8 +148,9 @@ public class Megalodog extends MegalodogChassis {
         ExtensionServo.setPosition(extensionServoFloor);
         myOpMode.sleep(200);
         IntakeBoxServo.setPower(.08);
+        TurnIntakeOn(.4);
         MoveStraight(230,.15,300);
-        TurnIntakeOn();
+
         myOpMode.sleep(800);
         TurnIntakeOff();
         myOpMode.sleep(wait);
@@ -174,6 +176,10 @@ public class Megalodog extends MegalodogChassis {
 
     public void TurnIntakeOn () {
         IntakeBoxServo.setPower(continuousIntakePower);
+    }
+    public void TurnIntakeOn(double power)
+    {
+        IntakeBoxServo.setPower(power);
     }
     public void TurnIntakeOff () {
         IntakeBoxServo.setPower(0);
