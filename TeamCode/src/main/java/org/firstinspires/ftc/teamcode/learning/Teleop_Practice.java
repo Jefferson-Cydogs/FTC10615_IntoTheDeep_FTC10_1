@@ -108,6 +108,7 @@ public class Teleop_Practice extends LinearOpMode {
         if(gamepad2.circle)  // left... 53 is starting 85 is closed
         {
             if(GripperRotatorServo.getPosition() > Megalodog.gripperRotatorDeployed - 0.1) {
+                SpecimenGripperServo.setPosition(Megalodog.specimenServoClosed);
                 GripperRotatorServo.setPosition(Megalodog.gripperRotatorStarting);
             }
             else {
@@ -148,7 +149,9 @@ public class Teleop_Practice extends LinearOpMode {
         }
 
         if(gamepad2.left_bumper){
-            SpecimenGripperServo.setPosition(Megalodog.specimenServoOpen);
+            if(checkRotatorGripperIsDeployed()) {
+                SpecimenGripperServo.setPosition(Megalodog.specimenServoOpen);
+            }
         }
         if (gamepad2.dpad_down) {
             checkExtensionServoSafety();
@@ -379,4 +382,11 @@ public class Teleop_Practice extends LinearOpMode {
             ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
         }
     }
+
+    private boolean checkRotatorGripperIsDeployed()
+    {
+        return (GripperRotatorServo.getPosition() > Megalodog.gripperRotatorDeployed-0.05);
+    }
+
+
 }

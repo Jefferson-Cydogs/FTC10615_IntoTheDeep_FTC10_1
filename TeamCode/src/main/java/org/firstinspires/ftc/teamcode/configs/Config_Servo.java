@@ -30,7 +30,7 @@ public class Config_Servo extends LinearOpMode {
     private boolean updated = false;
 
     //Define the inital servoPosition
-    private double servoPosition = 0.5;
+    private double servoPosition = 0.35;
 
     //Timer for optional servo select time out
     private ElapsedTime selectionTimer = new ElapsedTime();
