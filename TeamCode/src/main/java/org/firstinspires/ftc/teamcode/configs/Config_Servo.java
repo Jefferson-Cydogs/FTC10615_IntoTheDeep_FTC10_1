@@ -30,7 +30,7 @@ public class Config_Servo extends LinearOpMode {
     private boolean updated = false;
 
     //Define the inital servoPosition
-    private double servoPosition = 0.35;
+    private double servoPosition = 0.5;
 
     //Timer for optional servo select time out
     private ElapsedTime selectionTimer = new ElapsedTime();
@@ -39,20 +39,20 @@ public class Config_Servo extends LinearOpMode {
     public void runOpMode() {
 
         //Initialize the servos with error handling
-        servo1 = initalizeServo("Extension");
+      //  servo1 = initalizeServo("Extension");
         servo2 = initalizeServo("DeliveryBox");
-        servo3 = initalizeServo("GripperRotator");
+    //    servo3 = initalizeServo("GripperRotator");
         servo4 = initalizeServo("SpecimenGripper");
         // if (!initalizeServo("servo2")) return;
         // if (!initalizeServo("servo3")) return;
         //if (!initalizeServo("servo4")) return;
 
-        servo1.setDirection(Servo.Direction.FORWARD);
+     //   servo1.setDirection(Servo.Direction.FORWARD);
         //Option set intial position for all servos
-        servo1.setPosition(servoPosition);
+     //   servo1.setPosition(servoPosition);
         servo2.setPosition(servoPosition);
-        servo3.setPosition(servoPosition);
-        servo3.setDirection(Servo.Direction.REVERSE);
+     //   servo3.setPosition(servoPosition);
+     //   servo3.setDirection(Servo.Direction.REVERSE);
         servo4.setPosition(servoPosition);
         servo4.setDirection(Servo.Direction.REVERSE);
         //servo4.setPosition(servoPosition);
@@ -243,4 +243,3 @@ public class Config_Servo extends LinearOpMode {
 
 
 }
-

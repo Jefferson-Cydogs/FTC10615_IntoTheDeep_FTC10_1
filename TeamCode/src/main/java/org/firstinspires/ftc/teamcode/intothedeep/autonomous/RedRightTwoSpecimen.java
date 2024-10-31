@@ -52,11 +52,24 @@ public class RedRightTwoSpecimen extends LinearOpMode {
             // we delivered the sample, now move out of zone, wait, move in and grab specimen
             myBot.MoveStraight(240, .3, 700);
             myBot.StrafeLeft(280,.20, 700);
-            myBot.RotateLeft(7,.2, 3600);
+            myBot.RotateLeft(7,.2, 2600);
             myBot.MoveStraight(-350, .15, 1000);
             myBot.GrabSpecimenAndLift(700);
-            sleep(3000);
 
+            // now go place the specimen
+            myBot.MoveStraight(480, .3, 700);  // 734 to bar
+            myBot.StrafeLeft(840, .2, 1200);  // 840 to center
+            myBot.RotateLeft(184,.2, 1200);
+            myBot.RaiseLift (Megalodog.liftUpperSpecimenBar,100);
+            myBot.MoveStraight(54, .1, 400);
+            myBot.HookAndLetGo(Megalodog.liftUpperSpecimenBar-1000, 700, 500);
+
+            // now go park
+            myBot.MoveStraight(200,.25 ,200);
+            myBot.DeployExtensionServo(0);
+            myBot.RaiseLift(Megalodog.liftHome, 500);
+            myBot.PutGripperAway();
+            myBot.StrafeLeft(1180, 0.25, 1000);
 
         }
     }

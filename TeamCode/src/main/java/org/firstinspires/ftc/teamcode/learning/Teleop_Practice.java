@@ -105,7 +105,7 @@ public class Teleop_Practice extends LinearOpMode {
     }
     private void manageManipulatorControls()
     {
-        if(gamepad2.circle)  // left... 53 is starting 85 is closed
+        if(gamepad2.circle)  // left... 53 is starting 85 is closed.  Specimen ROTATOR
         {
             if(GripperRotatorServo.getPosition() > Megalodog.gripperRotatorDeployed - 0.1) {
                 SpecimenGripperServo.setPosition(Megalodog.specimenServoClosed);
@@ -115,18 +115,18 @@ public class Teleop_Practice extends LinearOpMode {
                 GripperRotatorServo.setPosition(Megalodog.gripperRotatorDeployed);
             }
         }
-        if(gamepad2.square)
+        if(gamepad2.square) // to hook specimen
         {
             Lift.setTargetPosition(Megalodog.liftPullSpecimenFromUpperBar);
             //schedule an open of specimen gripper
             triggerSpecimenGripperOpen = true;
         }
-        if(triggerSpecimenGripperOpen && Lift.getCurrentPosition() < Megalodog.liftPullSpecimenFromUpperBar-30)
+        if(triggerSpecimenGripperOpen && Lift.getCurrentPosition() < Megalodog.liftPullSpecimenFromUpperBar+30)
         {
             SpecimenGripperServo.setPosition(Megalodog.specimenServoOpen);
             triggerSpecimenGripperOpen = false;
         }
-        if (gamepad2.triangle) {
+        if (gamepad2.triangle) {  //Dump Delivery Box
             checkExtensionServoSafety();
             DeliveryBoxServo.setPosition(Megalodog.deliveryServoDump);
         } else if (gamepad2.cross) {
@@ -134,7 +134,7 @@ public class Teleop_Practice extends LinearOpMode {
             DeliveryBoxServo.setPosition(Megalodog.deliveryServoHome);
         }
 
-        if (gamepad2.right_trigger>0.4) {
+        if (gamepad2.right_trigger>0.4) {   // INTAKE
             IntakeBoxServo.setPower(Megalodog.continuousIntakePower);
         }
         else if(gamepad2.left_trigger>0.4) {
@@ -144,11 +144,11 @@ public class Teleop_Practice extends LinearOpMode {
             IntakeBoxServo.setPower(0);
         }
 
-        if(gamepad2.right_bumper){
+        if(gamepad2.right_bumper){  // Specimen Gripper CLOSE
             SpecimenGripperServo.setPosition(Megalodog.specimenServoClosed);
         }
 
-        if(gamepad2.left_bumper){
+        if(gamepad2.left_bumper){ // Specimen Gripper OPEN
             if(checkRotatorGripperIsDeployed()) {
                 SpecimenGripperServo.setPosition(Megalodog.specimenServoOpen);
             }
@@ -198,7 +198,7 @@ public class Teleop_Practice extends LinearOpMode {
                     extensionSliderPosition -= 100;
                     if(extensionSliderPosition < 150)
                     {
-                        resetExtensionSlider(1000);
+                        resetExtensionSlider(500);
                     }
                     else {
                         ExtensionSlider.setTargetPosition(extensionSliderPosition);
@@ -356,6 +356,12 @@ public class Teleop_Practice extends LinearOpMode {
         Lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Lift.setTargetPosition(0);
         Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        // LAJIRAFA_MAX_VELOCITY = (312 / 60) * 537.7;
+        // 312 is
+        // 537.7 is
+        //double liftMaxVelocity = (312 / 60) * 537.7;
+
         Lift.setPower(0.8);
     }
 
@@ -367,9 +373,9 @@ public class Teleop_Practice extends LinearOpMode {
         }
     }
 
-    private boolean checkIsLiftDown()
+    private boolean checkIsLiftDown()  // check if lift is down and delivery is home
     {
-        return (Lift.getCurrentPosition() < 150 && DeliveryBoxServo.getPosition() < Megalodog.deliveryServoHome+0.1);
+        return (Lift.getCurrentPosition() < 150 && DeliveryBoxServo.getPosition() > Megalodog.deliveryServoHome-0.1);
     }
     private boolean checkIsExtensionHome()
     {
