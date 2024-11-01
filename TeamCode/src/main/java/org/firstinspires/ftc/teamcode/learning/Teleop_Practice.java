@@ -102,6 +102,7 @@ public class Teleop_Practice extends LinearOpMode {
         {
             resetLift();
         }
+
     }
     private void manageManipulatorControls()
     {
@@ -144,13 +145,15 @@ public class Teleop_Practice extends LinearOpMode {
             IntakeBoxServo.setPower(0);
         }
 
-        if(gamepad2.right_bumper){  // Specimen Gripper CLOSE
-            SpecimenGripperServo.setPosition(Megalodog.specimenServoClosed);
+        if(gamepad2.right_bumper) {  // Specimen Gripper CLOSE
+            if (eventTracker.doEvent("Close Gripper", currentTimer.seconds(), 0.10))
+            {      SpecimenGripperServo.setPosition(Megalodog.specimenServoClosed);  }
         }
 
         if(gamepad2.left_bumper){ // Specimen Gripper OPEN
             if(checkRotatorGripperIsDeployed()) {
-                SpecimenGripperServo.setPosition(Megalodog.specimenServoOpen);
+                if (eventTracker.doEvent("Open Gripper", currentTimer.seconds(), 0.10))
+                {      SpecimenGripperServo.setPosition(Megalodog.specimenServoOpen);  }
             }
         }
         if (gamepad2.dpad_down) {
@@ -174,6 +177,10 @@ public class Teleop_Practice extends LinearOpMode {
             if(checkIsLiftDown()) {
                 ExtensionServo.setPosition(Megalodog.extensionServoDump);
             }
+        }
+        if(gamepad2.ps)
+        {
+            ExtensionServo.setPosition(Megalodog.extensionServoDump);
         }
         if(-gamepad2.right_stick_y < -0.2)
         {
@@ -367,7 +374,7 @@ public class Teleop_Practice extends LinearOpMode {
 
     private void checkExtensionServoSafety()
     {
-        if(ExtensionServo.getPosition() < Megalodog.extensionServoSafetyPosition)
+        if(ExtensionServo.getPosition() > Megalodog.extensionServoSafetyPosition+0.04)
         {
             ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
         }
@@ -383,7 +390,7 @@ public class Teleop_Practice extends LinearOpMode {
     }
     private void checkExtensionBoxForDrive()
     {
-        if(ExtensionServo.getPosition() > Megalodog.extensionServoSafetyPosition + 0.04)
+        if(ExtensionServo.getPosition() < Megalodog.extensionServoSafetyPosition - 0.04)
         {
             ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
         }

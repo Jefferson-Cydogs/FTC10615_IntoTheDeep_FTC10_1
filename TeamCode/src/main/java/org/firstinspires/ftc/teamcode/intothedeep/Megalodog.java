@@ -11,12 +11,12 @@ import com.qualcomm.robotcore.hardware.TouchSensor;
 import org.firstinspires.ftc.teamcode.chassis.MegalodogChassis;
 
 public class Megalodog extends MegalodogChassis {
-    public final static int extensionSliderMax = 900;
+    public final static int extensionSliderMax = 1000;
     public final static int liftLowerBasket = 1900;
     public final static int liftHome = 30;
     public final static int liftUpperBasket = 4700;
     public final static int liftLowerSpecimenBar = 500;
-    public final static int liftUpperSpecimenBar = 2600;
+    public final static int liftUpperSpecimenBar = 2620;
     public final static int liftPullSpecimenFromUpperBar = 1600;
     public final static int liftSnapSpecimen = 200;
     public final static int liftGetSpecimenFromWall = 500;
@@ -24,17 +24,17 @@ public class Megalodog extends MegalodogChassis {
     public final static int liftHangOnUpperBar = 1000;
     // .89 was good when angled higher
     //  .93 was config servo at lower angle
-    public final static double extensionServoFloor = 0.885;
-    public final static double extensionServoDump = 0.20;
-    public final static double extensionServoSafetyPosition = 0.75;
-    public final static double deliveryServoHome = 0.85;
-    public final static double deliveryServoDump = 0.13;
+    public final static double extensionServoFloor = 0.024;
+    public final static double extensionServoDump = 0.75;
+    public final static double extensionServoSafetyPosition = 0.2;
+    public final static double deliveryServoHome = 0.89;
+    public final static double deliveryServoDump = 0.17;
     public final static double specimenServoOpen = 0.4;
-    public final static double specimenServoClosed = 0.505; // was .45
-    public final static double specimenServoStarting = 0.5;
+    public final static double specimenServoClosed = 0.527;
+    public final static double specimenServoStarting = 0.527;
     public final static double continuousIntakePower = 0.4;
-    public final static double gripperRotatorStarting = 0.53;
-    public final static double gripperRotatorDeployed = 0.85;
+    public final static double gripperRotatorStarting = 0.55;
+    public final static double gripperRotatorDeployed = 0.86;
 
     private double extensionServoPosition;
     private double deliveryBoxServoPosition;
@@ -182,8 +182,8 @@ public class Megalodog extends MegalodogChassis {
         IntakeBoxServo.setPower(.08);
         TurnIntakeOn(.16);
         MoveStraight(scootDistance,.2,300);
-        ExtensionServo.setPosition(extensionServoFloor+0.015);
-        myOpMode.sleep(700);
+        ExtensionServo.setPosition(extensionServoFloor-0.018);
+        myOpMode.sleep(800);
         ExtensionServo.setPosition(extensionServoFloor);
         TurnIntakeOff();
         myOpMode.sleep(wait);

@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
 
 // The 'extends LinearOpMode' is needed so this code can run the build in op mode code from FIRST.
 //    @Autonomous puts this code in the autonomous category on driver station
-@Autonomous(name="Left", group="Autonomous", preselectTeleOp = "The Final Countdown")
+@Autonomous(name="Left Samples", group="Autonomous", preselectTeleOp = "The Final Countdown")
 public class RedLeftOneSample extends LinearOpMode {
 
     /* declare variables
@@ -30,7 +30,8 @@ public class RedLeftOneSample extends LinearOpMode {
         Megalodog myBot = new Megalodog(this);
         myBot.InitializeDevices();
         // Put code that should run during initialization HERE in this area
-
+        telemetry.addLine("It's okay to start now");
+        telemetry.update();
         // Wait for the start button to be pressed on the driver station
         waitForStart();
 
@@ -41,7 +42,7 @@ public class RedLeftOneSample extends LinearOpMode {
             myBot.RaiseLift(Megalodog.liftUpperBasket,1300);
             myBot.MoveStraight(-325,.2, 200);
             myBot.DumpDeliveryBox(deliveryBoxDumpWaitTime);
-            myBot.MoveStraight(205,autonSpeed,100);  // was 85
+            myBot.MoveStraight(210,autonSpeed,100);  // was 85
             myBot.LiftMoveToHome(450);  // changed from 600 in good run
 
             // 2nd sample
@@ -53,7 +54,7 @@ public class RedLeftOneSample extends LinearOpMode {
             // testing adjustment
             myBot.RotateLeft(10, .5, 150);
 
-            myBot.ScootAndScoop(200);
+            myBot.ScootAndScoop(200, 230);
             myBot.RotateRight(36,autonSpeed,200); // changed from 20
             myBot.ExchangeServoRaise(200);
             myBot.MoveStraight(-480,.4,100);
@@ -70,13 +71,13 @@ public class RedLeftOneSample extends LinearOpMode {
             myBot.MoveStraight(185,.4,300);
 
             // testing adjustment
-            myBot.RotateLeft(27, .5, 150);
+            myBot.RotateLeft(15, .5, 150);
 
-            myBot.ScootAndScoop(200, 220);
-            myBot.RotateRight(48,autonSpeed,100);  // was 35
+            myBot.ScootAndScoop(200, 240);
+            myBot.RotateRight(39,autonSpeed,100);  // was 35
             myBot.ExchangeServoRaise(200);
             myBot.StrafeRight(62,autonSpeed,300);
-            myBot.MoveStraight(-415,autonSpeed,0);
+            myBot.MoveStraight(-420,autonSpeed,0);
             myBot.ExchangeSample(100);
             myBot.RaiseLift(Megalodog.liftUpperBasket,2200);
             myBot.DumpDeliveryBox(deliveryBoxDumpWaitTime);
