@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.intothedeep.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
@@ -9,10 +8,8 @@ import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
 
 // The 'extends LinearOpMode' is needed so this code can run the build in op mode code from FIRST.
 //    @Autonomous puts this code in the autonomous category on driver station
-
-@Disabled
-@Autonomous(name="Right Blue Two Specimen / Park", group="Autonomous")
-public class BlueRightTwoSpecimen extends LinearOpMode {
+@Autonomous(name="Right Two Specimen with BUMP", group="Autonomous", preselectTeleOp = "The Final Countdown")
+public class BlueRightTwoSpecimenBump extends LinearOpMode {
 
     /* declare variables
 
@@ -39,49 +36,54 @@ public class BlueRightTwoSpecimen extends LinearOpMode {
             myBot.RaiseLift (Megalodog.liftUpperSpecimenBar+370,100);
          //   myBot.MoveStraight(-633,.25,800);
          //   myBot.MoveStraight(-80,.10,500);
-            myBot.MoveStraight(-795,.12,500);  // was -705
-            myBot.MoveStraight(66,.12,300);
-            myBot.HookAndLetGo(Megalodog.liftUpperSpecimenBar-1000, 1050, 0);
+            myBot.MoveStraight(-795,.14,200);  // was -705
+            myBot.MoveStraight(66,.12,200);
+            myBot.HookAndLetGo(Megalodog.liftUpperSpecimenBar-1050, 1100, 0);
 
             // hooked, now move back, over, and get around a sample ready to push
             myBot.MoveStraight(100,.25 ,200);
-            myBot.RaiseLift(Megalodog.liftHome, 100);
+            myBot.RaiseLift(Megalodog.liftHome-30, 100);
             myBot.PutGripperAway();
-            myBot.StrafeLeft(590, 0.25, 600);
-            myBot.RotateLeft(185,.25,600);
-            myBot.MoveStraight(610,.35, 500);
-            myBot.StrafeRight(240,.25, 700);
+            myBot.StrafeLeft(460, 0.25, 400);
+            myBot.RotateLeft(185,.25,300);
+            myBot.MoveStraight(610,.35, 200);
+            myBot.StrafeRight(240,.25, 200);
 
             // now we're at a sample ready to push to human helper
-            myBot.MoveStraight(-1040, .4, 700);
-            myBot.DeployAndOpenSpecimenGripper(0);
+            myBot.MoveStraight(-1040, .4, 200);
+
 
 
             // we delivered the sample, now move out of zone, wait, move in and grab specimen
-            myBot.MoveStraight(240, .35, 400);
-            myBot.StrafeLeft(280,.20, 700);
+            myBot.MoveStraight(240, .35, 1600);
+            //myBot.StrafeLeft(280,.20, 1500);
             //myBot.RotateLeft(7,.2, 1600);
-            myBot.MoveStraight(-360, .15, 1000);
+            myBot.MoveStraight(-420, .25, 100);
+            myBot.MoveStraight(100, .12, 700);
+           // myBot.DeployAndOpenSpecimenGripper(0);
+            myBot.OpenGripperForWall(0);
+            myBot.MoveStraight(-38, .12, 200);
             myBot.GrabSpecimenAndLift(500);  // cannot lower wait
+            myBot.LevelGripper(0);
 
             // now go place the specimen
-            myBot.MoveStraight(250, .25, 500);  // 734 to bar
-            myBot.StrafeLeft(840, .35, 600);  // 840 to center
+            myBot.MoveStraight(250, .25, 200);  // 734 to bar
+            myBot.StrafeLeft(1120, .35, 200);  // 840 to center
             myBot.RaiseLift (Megalodog.liftUpperSpecimenBar+370,100);
-            myBot.RotateLeft(184,.45, 500);
-
-            //myBot.MoveStraight(-280, .2, 800);
-            myBot.MoveStraight(-530,.2,400);  // was -705
-            myBot.MoveStraight(86,.15,300);
-            myBot.HookAndLetGo(Megalodog.liftUpperSpecimenBar-1000, 1050, 0);
+            myBot.RotateLeft(180,.45, 200);
+            myBot.DeployExtensionServo(0);
+            myBot.MoveStraight(-540,.20,200);  // was -705
+            myBot.MoveStraight(95,.15,200);
+            myBot.HookAndLetGo(Megalodog.liftUpperSpecimenBar-1000, 1050, 200);
 
 
             // end here
+            myBot.MoveStraight(100,0.75,0);
             myBot.PutGripperAway();
-            myBot.DeployExtensionServo(300);
+            myBot.StrafeLeft(1200, 0.75, 200);
             myBot.RaiseLift(Megalodog.liftHome, 0);
-            myBot.StrafeLeft(1180, 0.6, 200);
-            myBot.MoveStraight(400,0.6,2000);
+            myBot.MoveStraight(380,0.75,200);
+
             // now go park
             //myBot.MoveStraight(300,.25 ,200);
             //myBot.DeployExtensionServo(0);

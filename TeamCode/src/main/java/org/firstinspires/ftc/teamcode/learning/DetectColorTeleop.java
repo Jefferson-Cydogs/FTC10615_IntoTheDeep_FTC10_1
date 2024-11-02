@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.learning;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
@@ -16,6 +17,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
  * Detection results are displayed via telemetry and visually annotated on the camera feed.
  * Only one color will be flagged as detected based on the area occupied by each color in the frame.
  */
+@Disabled
 @TeleOp
 public class DetectColorTeleop extends LinearOpMode {
 

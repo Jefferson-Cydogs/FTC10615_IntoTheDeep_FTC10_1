@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.configs;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
+@Disabled
 @TeleOp
 public class Config_ContinuousServo extends LinearOpMode {
 

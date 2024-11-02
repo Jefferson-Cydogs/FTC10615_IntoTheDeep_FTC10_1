@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.intothedeep.autonomous;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
 
 // The 'extends LinearOpMode' is needed so this code can run the build in op mode code from FIRST.
 //    @Autonomous puts this code in the autonomous category on driver station
+@Disabled
 @Autonomous(name="Right Two Specimen / Park", group="Autonomous")
 public class RedRightTwoSpecimen extends LinearOpMode {
 
@@ -61,7 +63,7 @@ public class RedRightTwoSpecimen extends LinearOpMode {
             myBot.StrafeLeft(840, .2, 1200);  // 840 to center
             myBot.RotateLeft(184,.2, 1200);
             myBot.RaiseLift (Megalodog.liftUpperSpecimenBar,100);
-            myBot.MoveStraight(54, .1, 400);
+            myBot.MoveStraight(58, .1, 400);
             myBot.HookAndLetGo(Megalodog.liftUpperSpecimenBar-1000, 700, 500);
 
             // now go park

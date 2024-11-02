@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.configs;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -13,6 +14,7 @@ Using PlayStation controller buttons, Includes error handling to make sure servo
 After selection you can control servos position using gamepad.
 */
 
+@Disabled
 @TeleOp
 public class Config_Servo2 extends LinearOpMode {
 

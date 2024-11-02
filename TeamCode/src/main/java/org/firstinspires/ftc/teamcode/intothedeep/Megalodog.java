@@ -25,9 +25,9 @@ public class Megalodog extends MegalodogChassis {
     // .89 was good when angled higher
     //  .93 was config servo at lower angle
     public final static double extensionServoFloor = 0.024;
-    public final static double extensionServoDump = 0.75;
+    public final static double extensionServoDump = 0.77;
     public final static double extensionServoSafetyPosition = 0.2;
-    public final static double deliveryServoHome = 0.89;
+    public final static double deliveryServoHome = 0.88;
     public final static double deliveryServoDump = 0.17;
     public final static double specimenServoOpen = 0.4;
     public final static double specimenServoClosed = 0.527;
@@ -35,6 +35,7 @@ public class Megalodog extends MegalodogChassis {
     public final static double continuousIntakePower = 0.4;
     public final static double gripperRotatorStarting = 0.55;
     public final static double gripperRotatorDeployed = 0.86;
+    public final static double gripperRotatorDowntoGrab = 0.92;
 
     private double extensionServoPosition;
     private double deliveryBoxServoPosition;
@@ -108,7 +109,7 @@ public class Megalodog extends MegalodogChassis {
     public void GrabSpecimenAndLift (int waittime) {
 
         SpecimenGripperServo.setPosition(specimenServoClosed);
-        myOpMode.sleep(200);
+        myOpMode.sleep(500);
         Lift.setTargetPosition(liftHome+700);
         myOpMode.sleep(waittime);
     }
@@ -142,6 +143,19 @@ public class Megalodog extends MegalodogChassis {
         SpecimenGripperServo.setPosition(specimenServoOpen);
         myOpMode.sleep(wait);
 
+    }
+    public void OpenGripperForWall(int wait)
+    {
+        GripperRotatorServo.setPosition(gripperRotatorDowntoGrab);
+        myOpMode.sleep(100);
+        SpecimenGripperServo.setPosition(specimenServoOpen);
+        myOpMode.sleep(wait);
+
+    }
+    public void LevelGripper(int wait)
+    {
+        GripperRotatorServo.setPosition(gripperRotatorDeployed);
+        myOpMode.sleep(wait);
     }
 
     public void MoveSlideAndScoop (int distanceMM,int wait) {

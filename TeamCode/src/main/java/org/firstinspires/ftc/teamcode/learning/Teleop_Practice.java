@@ -157,7 +157,8 @@ public class Teleop_Practice extends LinearOpMode {
             }
         }
         if (gamepad2.dpad_down) {
-            checkExtensionServoSafety();
+            if(currentTimer.seconds() < 100)
+            {checkExtensionServoSafety();}
             deliveryBoxServoPosition = Megalodog.deliveryServoHome;
             DeliveryBoxServo.setPosition(deliveryBoxServoPosition);
             Lift.setTargetPosition(30);
@@ -180,7 +181,8 @@ public class Teleop_Practice extends LinearOpMode {
         }
         if(gamepad2.ps)
         {
-            ExtensionServo.setPosition(Megalodog.extensionServoDump);
+            //hangRobot();
+            ExtensionServo.setPosition(.5);
         }
         if(-gamepad2.right_stick_y < -0.2)
         {
@@ -205,7 +207,7 @@ public class Teleop_Practice extends LinearOpMode {
                     extensionSliderPosition -= 100;
                     if(extensionSliderPosition < 150)
                     {
-                        resetExtensionSlider(500);
+                        resetExtensionSlider(600);
                     }
                     else {
                         ExtensionSlider.setTargetPosition(extensionSliderPosition);
@@ -218,6 +220,48 @@ public class Teleop_Practice extends LinearOpMode {
 
     }
 
+    private void hangRobot()
+    {
+        Lift.setTargetPosition(Megalodog.liftUpperSpecimenBar-300);
+        ExtensionServo.setPosition(.5);
+        FrontRightWheel.setPower(0);
+        BackRightWheel.setPower(0);
+        FrontLeftWheel.setPower(0);
+        BackLeftWheel.setPower(0);
+
+        // Set the direction of the wheels.  Because of how the wheels are installed, one side
+        //   has to be reverse.
+        FrontRightWheel.setDirection(DcMotor.Direction.FORWARD);
+        BackRightWheel.setDirection(DcMotor.Direction.FORWARD);
+        FrontLeftWheel.setDirection(DcMotor.Direction.REVERSE);
+        BackLeftWheel.setDirection(DcMotor.Direction.REVERSE);
+
+        // > Set motors' ZeroPower behavior
+        FrontLeftWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FrontRightWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BackLeftWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BackRightWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+        // > Clear Encoders of prior data
+        FrontLeftWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FrontRightWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BackLeftWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        BackRightWheel.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        FrontLeftWheel.setTargetPosition(0);
+        FrontRightWheel.setTargetPosition(0);
+        BackLeftWheel.setTargetPosition(0);
+        BackRightWheel.setTargetPosition(0);
+
+        // > Set some motors' modes different from RUN_WITHOUT_ENCODER (default)
+        FrontLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        FrontRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BackLeftWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        BackRightWheel.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        Megalodog myBot = new Megalodog(this);
+        myBot.MoveStraight(100,.4, 100);
+        Lift.setTargetPosition(Megalodog.liftHome);
+    }
     private void initializePositions()
     {
 
