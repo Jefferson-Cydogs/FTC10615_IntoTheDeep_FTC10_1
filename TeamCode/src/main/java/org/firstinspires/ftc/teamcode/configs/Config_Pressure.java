@@ -8,19 +8,19 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 
-@Disabled
 @TeleOp
 public class Config_Pressure extends LinearOpMode {
 
     // declare variables here
     private TouchSensor ExtensionLimit;
     private TouchSensor LiftLimit;
+    private TouchSensor WallFinder;
 
     @Override
     public void runOpMode() {
         ExtensionLimit = hardwareMap.get(TouchSensor.class, "ExtensionLimit");
         LiftLimit = hardwareMap.get(TouchSensor.class, "LiftLimit");
-
+        WallFinder = hardwareMap.get(TouchSensor.class, "WallFinder");
         waitForStart();
 
 
@@ -28,6 +28,16 @@ public class Config_Pressure extends LinearOpMode {
             // do op mode things here
             if (ExtensionLimit.isPressed()) {
                 telemetry.addLine("Extension Limit is pressed");
+                //   telemetry.update();
+                sleep(40);
+            }
+            if (WallFinder.isPressed()) {
+                telemetry.addLine("Wall Finder is pressed");
+                //   telemetry.update();
+                sleep(40);
+            }
+            if (!WallFinder.isPressed()) {
+                telemetry.addLine("Wall Finder is NOT pressed");
                 //   telemetry.update();
                 sleep(40);
             }

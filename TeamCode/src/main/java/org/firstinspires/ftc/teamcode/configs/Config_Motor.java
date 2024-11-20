@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 
-@Disabled
 @TeleOp
 public class Config_Motor extends LinearOpMode {
 

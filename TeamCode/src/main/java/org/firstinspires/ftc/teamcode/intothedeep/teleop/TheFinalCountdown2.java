@@ -1,21 +1,23 @@
-package org.firstinspires.ftc.teamcode.learning;
+package org.firstinspires.ftc.teamcode.intothedeep.teleop;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.core.EventTracker;
 import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
 
 // switch fast and slow drive
-@Disabled
-@TeleOp(name="The Final Countdown", group="Teleop")
-public class Teleop_Practice extends LinearOpMode {
+@TeleOp(name="Shark Attack!", group="Teleop")
+public class TheFinalCountdown2 extends LinearOpMode {
 
     private DcMotor BackLeftWheel;
     private DcMotor FrontLeftWheel;
@@ -30,11 +32,18 @@ public class Teleop_Practice extends LinearOpMode {
     private TouchSensor WallFinder;
     private Servo ExtensionServo;
     private Servo DeliveryBoxServo;
+    private Servo ExtensionBoxRotation;
     private Servo GripperRotatorServo;
     private CRServo IntakeBoxServo;
     public Servo SpecimenGripperServo;
     private double extensionServoPosition;
+    private DigitalChannel RedLEDLeft;
+    private DigitalChannel RedLEDRight;
+    private DigitalChannel GreenLEDLeft;
+    private DigitalChannel GreenLEDRight;
 
+    private ColorSensor colorSensor;
+    private DistanceSensor distanceSensor;
     private double deliveryBoxServoPosition;
     private double specimenServoPosition;
     private float gamepad1_RightStickYValue;
@@ -51,11 +60,22 @@ public class Teleop_Practice extends LinearOpMode {
     private double lowSpeedDrive = 0.3;
     private double rotateSpeedDrive = 0.55;
     private int liftGoToPosition = 0;
+    private double currentIntakePower = Megalodog.continuousIntakePower;
     private boolean triggerSpecimenGripperOpen = false;
     private boolean allowDriving = true;
 
+    private double currentExtensionBoxRotationPosition = Megalodog.extensionBoxRotatorStarting;
+    private double extensionBoxRotationSpeed = 0.035;
+
+    double extensionBoxJoystick;
+
     private ElapsedTime currentTimer;
     private EventTracker eventTracker;
+    private int red;
+    private int green;
+    private int blue;
+    private double distance;
+
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
      */
@@ -90,8 +110,20 @@ public class Teleop_Practice extends LinearOpMode {
                 manageDriverControls();
                 manageManipulatorControls();
 
+                // get color settings
+
+
                 if(eventTracker.doEvent("Telemetry",currentTimer.seconds(),0.3))
                 {
+            /*        telemetry.clear();
+                    red = colorSensor.red();
+                    green = colorSensor.green();
+                    blue = colorSensor.blue();
+                    distance = distanceSensor.getDistance(DistanceUnit.MM);
+                    telemetry.addData("Red:", red);
+                    telemetry.addData("Green:", green);
+                    telemetry.addData("Blue:", blue);
+                    telemetry.addData("Distance(mm):", distance);*/
                     telemetry.update();
                 }
             }
@@ -108,15 +140,17 @@ public class Teleop_Practice extends LinearOpMode {
         {
             resetLift();
         }
-        if(gamepad1.triangle)
+        if(gamepad1.dpad_up)
         {
             allowDriving=true;
         }
-
-    }
-    private void manageManipulatorControls()
-    {
-        if(gamepad2.circle)  // left... 53 is starting 85 is closed.  Specimen ROTATOR
+        if(gamepad1.triangle) //  hook specimen
+        {
+            Lift.setTargetPosition(Megalodog.liftPullSpecimenFromUpperBar);
+            //schedule an open of specimen gripper
+            triggerSpecimenGripperOpen = true;
+        }
+        if(gamepad1.cross)
         {
             if(GripperRotatorServo.getPosition() > Megalodog.gripperRotatorDeployed - 0.1) {
                 SpecimenGripperServo.setPosition(Megalodog.specimenServoClosed);
@@ -126,11 +160,20 @@ public class Teleop_Practice extends LinearOpMode {
                 GripperRotatorServo.setPosition(Megalodog.gripperRotatorDeployed);
             }
         }
-        if(gamepad2.square) // to hook specimen
+
+    }
+    private void manageManipulatorControls()
+    {
+        if(gamepad2.circle)  // dump extension servo
         {
-            Lift.setTargetPosition(Megalodog.liftPullSpecimenFromUpperBar);
-            //schedule an open of specimen gripper
-            triggerSpecimenGripperOpen = true;
+            if(checkIsLiftDown()) {
+                ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
+                ExtensionServo.setPosition(Megalodog.extensionServoDump);
+            }
+        }
+        if(gamepad2.square) // extension to floor
+        {
+            ExtensionServo.setPosition(Megalodog.extensionServoFloor);
         }
         if(triggerSpecimenGripperOpen && Lift.getCurrentPosition() < Megalodog.liftPullSpecimenFromUpperBar+30)
         {
@@ -148,10 +191,16 @@ public class Teleop_Practice extends LinearOpMode {
         }
 
         if (gamepad2.right_trigger>0.4) {   // INTAKE
-            IntakeBoxServo.setPower(Megalodog.continuousIntakePower);
+            if(checkIsIntakeUp()) { currentIntakePower = Megalodog.continuousIntakeDumpPower;}
+            else {currentIntakePower = Megalodog.continuousIntakePower;}
+
+            IntakeBoxServo.setPower(currentIntakePower);
         }
         else if(gamepad2.left_trigger>0.4) {
-            IntakeBoxServo.setPower(-Megalodog.continuousIntakePower);
+            if(checkIsIntakeUp()) { currentIntakePower = Megalodog.continuousIntakeDumpPower;}
+            else {currentIntakePower = Megalodog.continuousIntakePower;}
+
+            IntakeBoxServo.setPower(-currentIntakePower);
         }
         else {
             IntakeBoxServo.setPower(0);
@@ -210,9 +259,11 @@ public class Teleop_Practice extends LinearOpMode {
         }
         if(-gamepad2.right_stick_y > 0.2)
         {
-            //if(checkIsLiftDown() && checkIsExtensionHome()) {
-            if(checkIsLiftDown()) {
-                ExtensionServo.setPosition(Megalodog.extensionServoDump);
+            if(eventTracker.doEvent("Extension Box Rotator",currentTimer.seconds(),0.05)) {
+                currentExtensionBoxRotationPosition += extensionBoxRotationSpeed;
+                currentExtensionBoxRotationPosition = Math.max(0.0, Math.min(currentExtensionBoxRotationPosition, 1.0));
+                ExtensionBoxRotation.setPosition(currentExtensionBoxRotationPosition);
+                telemetry.addData("extension rotate:", currentExtensionBoxRotationPosition);
             }
         }
         if(gamepad2.ps)
@@ -222,7 +273,12 @@ public class Teleop_Practice extends LinearOpMode {
         }
         if(-gamepad2.right_stick_y < -0.2)
         {
-            ExtensionServo.setPosition(Megalodog.extensionServoFloor);
+            if(eventTracker.doEvent("Extension Box Rotator",currentTimer.seconds(),0.05)) {
+                currentExtensionBoxRotationPosition -= extensionBoxRotationSpeed;
+                currentExtensionBoxRotationPosition = Math.max(0.0, Math.min(currentExtensionBoxRotationPosition, 1.0));
+                ExtensionBoxRotation.setPosition(currentExtensionBoxRotationPosition);
+                telemetry.addData("extension rotate:", currentExtensionBoxRotationPosition);
+            }
         }
         if(-gamepad2.left_stick_y > 0.2)
         {
@@ -240,6 +296,7 @@ public class Teleop_Practice extends LinearOpMode {
             if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.10)) {
                 if (extensionSliderPosition > 100) {
                     ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
+                    ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
                     extensionSliderPosition -= 100;
                     if(extensionSliderPosition < 150)
                     {
@@ -306,7 +363,18 @@ public class Teleop_Practice extends LinearOpMode {
         DeliveryBoxServo.setPosition(Megalodog.deliveryServoHome);
         SpecimenGripperServo.setPosition(Megalodog.specimenServoStarting);
         GripperRotatorServo.setPosition(Megalodog.gripperRotatorStarting);
+        ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
+  //      RedLEDLeft.setState(true);
+    //    RedLEDRight.setState(true);
+      //  GreenLEDRight.setState(true);
+        //GreenLEDLeft.setState(true);
+/*
+        RedLEDLeft.setState(true);
+        GreenLEDLeft.setState(false);
 
+        GreenLEDRight.setState(true);
+        RedLEDRight.setState(false);
+*/
     }
 
     private void driveChassis()
@@ -319,6 +387,7 @@ public class Teleop_Practice extends LinearOpMode {
         if(Math.abs(gamepad1_RightStickYValue) > 0.2)
         {
             checkExtensionBoxForDrive();
+            ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
         }
         if (gamepad1_RightStickYValue != 0 || gamepad1_RightStickXValue != 0 || gamepad1_LeftStickYValue != 0 || gamepad1_LeftStickXValue != 0 || gamepad1_TriggersValue != 0) {
             // Set robot's move forward(+) or backwards(-) power
@@ -381,6 +450,7 @@ public class Teleop_Practice extends LinearOpMode {
     private void initializeDevices()
     {
         ExtensionServo = hardwareMap.get(Servo.class, "Extension");
+        ExtensionBoxRotation = hardwareMap.get(Servo.class, "ExtensionBoxRotator");
         DeliveryBoxServo = hardwareMap.get(Servo.class, "DeliveryBox");
         IntakeBoxServo = hardwareMap.get(CRServo.class, "IntakeBox");
         SpecimenGripperServo = hardwareMap.get(Servo.class,"SpecimenGripper");
@@ -391,7 +461,22 @@ public class Teleop_Practice extends LinearOpMode {
         LiftLimit = hardwareMap.get(TouchSensor.class, "LiftLimit");
         LiftLimit2 = hardwareMap.get(TouchSensor.class, "LiftLimit2");
         WallFinder = hardwareMap.get(TouchSensor.class, "WallFinder");
+        // LEDLeft and LEDRight
+        /*
+        RedLEDLeft = hardwareMap.get(DigitalChannel.class, "RedLEDLeft");
+        RedLEDLeft.setMode(DigitalChannel.Mode.OUTPUT);
+        RedLEDRight = hardwareMap.get(DigitalChannel.class, "RedLEDRight");
+        RedLEDRight.setMode(DigitalChannel.Mode.OUTPUT);
+        GreenLEDLeft = hardwareMap.get(DigitalChannel.class, "GreenLEDLeft");
+        GreenLEDLeft.setMode(DigitalChannel.Mode.OUTPUT);
+        GreenLEDRight = hardwareMap.get(DigitalChannel.class, "GreenLEDRight");
+        GreenLEDRight.setMode(DigitalChannel.Mode.OUTPUT);
+
+        colorSensor = hardwareMap.get(ColorSensor.class,"ColorSensor");
+        distanceSensor = hardwareMap.get(DistanceSensor.class, "ColorSensor");
+        */
         SpecimenGripperServo.setDirection(Servo.Direction.REVERSE);
+
         GripperRotatorServo.setDirection(Servo.Direction.REVERSE);
         resetExtensionSlider(3000);
 
@@ -467,6 +552,11 @@ public class Teleop_Practice extends LinearOpMode {
     private boolean checkIsLiftUp()
     {
         return (Lift.getCurrentPosition() > Megalodog.liftLowerBasket);
+    }
+
+    private boolean checkIsIntakeUp()
+    {
+        return (ExtensionServo.getPosition() > Megalodog.extensionServoDump-0.2);
     }
     private boolean checkIsExtensionHome()
     {

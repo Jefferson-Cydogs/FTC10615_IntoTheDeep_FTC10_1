@@ -14,7 +14,7 @@ Using PlayStation controller buttons, Includes error handling to make sure servo
 After selection you can control servos position using gamepad.
 */
 
-@Disabled
+
 @TeleOp
 public class Config_Servo2 extends LinearOpMode {
 
