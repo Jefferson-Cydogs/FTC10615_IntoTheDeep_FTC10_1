@@ -11,13 +11,12 @@ import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.core.EventTracker;
 import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
 
 // switch fast and slow drive
 @TeleOp(name="Shark Attack!", group="Teleop")
-public class TheFinalCountdown2 extends LinearOpMode {
+public class SharkAttackTeleop extends LinearOpMode {
 
     private DcMotor BackLeftWheel;
     private DcMotor FrontLeftWheel;
