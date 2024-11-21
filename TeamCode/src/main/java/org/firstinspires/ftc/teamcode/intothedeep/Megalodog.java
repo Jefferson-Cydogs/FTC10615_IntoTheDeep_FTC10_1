@@ -25,7 +25,7 @@ public class Megalodog extends MegalodogChassis {
     // .89 was good when angled higher
     //  .93 was config servo at lower angle
     public final static double extensionServoFloor = 0.021;
-    public final static double extensionServoDump = 0.77;
+    public final static double extensionServoDump = 0.8;
     public final static double extensionServoSafetyPosition = 0.2;
     public final static double deliveryServoHome = 0.88;
     public final static double deliveryServoDump = 0.17;
