@@ -1,23 +1,23 @@
-package org.firstinspires.ftc.teamcode.intothedeep.teleop;
+package org.firstinspires.ftc.teamcode.configs;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.core.EventTracker;
 import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
 
 // switch fast and slow drive
-@TeleOp(name="Shark Attack!", group="Teleop")
-public class SharkAttackTeleop extends LinearOpMode {
+@TeleOp
+public class Config_ExtensionRotator extends LinearOpMode {
 
     private DcMotor BackLeftWheel;
     private DcMotor FrontLeftWheel;
@@ -102,35 +102,18 @@ public class SharkAttackTeleop extends LinearOpMode {
             // RUN BLOCKS:
             initializePositions();
             while (opModeIsActive()) {
-            //    telemetry.clear();
+
                 // LOOP BLOCKS:
-                if(allowDriving) {
-                    driveChassis();
-                }
+
                 manageDriverControls();
                 manageManipulatorControls();
 
                 // get color settings
 
 
-                if(eventTracker.doEvent("Telemetry",currentTimer.seconds(),0.5))
+                if(eventTracker.doEvent("Telemetry",currentTimer.seconds(),0.3))
                 {
 
-                    red = colorSensor.red();
-                    green = colorSensor.green();
-                    blue = colorSensor.blue();
-                    distance = distanceSensor.getDistance(DistanceUnit.MM);
-                    if(distance < 10)
-                    {
-                        setLightsGreen();
-                    }
-                    else {
-                        setLightsRed();
-                    }
-                //    telemetry.addData("Red:", red);
-                //    telemetry.addData("Green:", green);
-                //    telemetry.addData("Blue:", blue);
-               //     telemetry.addData("Distance(mm):", distance);
                     telemetry.update();
                 }
             }
@@ -171,103 +154,7 @@ public class SharkAttackTeleop extends LinearOpMode {
     }
     private void manageManipulatorControls()
     {
-        if(gamepad2.circle)  // dump extension servo
-        {
-            if(checkIsLiftDown()) {
-                ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorDumping);
-                ExtensionServo.setPosition(Megalodog.extensionServoDump);
-            }
-        }
-        if(gamepad2.square) // extension to floor
-        {
-            if(checkIsIntakeUp())
-            {
-                ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
-            }
-            ExtensionServo.setPosition(Megalodog.extensionServoFloor);
-        }
-        if(triggerSpecimenGripperOpen && Lift.getCurrentPosition() < Megalodog.liftPullSpecimenFromUpperBar+30)
-        {
-            SpecimenGripperServo.setPosition(Megalodog.specimenServoOpen);
-            triggerSpecimenGripperOpen = false;
-            allowDriving = true;
-            reFloatWheels();
-        }
-        if (gamepad2.triangle) {  //Dump Delivery Box
-            checkExtensionServoSafety();
-            DeliveryBoxServo.setPosition(Megalodog.deliveryServoDump);
-        } else if (gamepad2.cross) {
-            checkExtensionServoSafety();
-            DeliveryBoxServo.setPosition(Megalodog.deliveryServoHome);
-        }
 
-        if (gamepad2.right_trigger>0.4) {   // INTAKE
-            if(checkIsIntakeUp()) { currentIntakePower = Megalodog.continuousIntakeDumpPower;}
-            else {currentIntakePower = Megalodog.continuousIntakePower;}
-
-            IntakeBoxServo.setPower(currentIntakePower);
-        }
-        else if(gamepad2.left_trigger>0.4) {
-            if(checkIsIntakeUp()) { currentIntakePower = Megalodog.continuousIntakeDumpPower;}
-            else {currentIntakePower = Megalodog.continuousIntakePower;}
-
-            IntakeBoxServo.setPower(-currentIntakePower);
-        }
-        else {
-            IntakeBoxServo.setPower(0);
-        }
-
-        if(gamepad2.right_bumper) {  // Specimen Gripper CLOSE
-            if (eventTracker.doEvent("Close Gripper", currentTimer.seconds(), 0.10))
-            {      SpecimenGripperServo.setPosition(Megalodog.specimenServoClosed);  }
-        }
-
-        if(gamepad2.left_bumper){ // Specimen Gripper OPEN
-            if(checkRotatorGripperIsDeployed()) {
-                if (eventTracker.doEvent("Open Gripper", currentTimer.seconds(), 0.10))
-                {      SpecimenGripperServo.setPosition(Megalodog.specimenServoOpen);  }
-            }
-        }
-        if(WallFinder.isPressed() && checkIsLiftDown())
-        {
-            if (eventTracker.doEvent("Wall Close Gripper", currentTimer.seconds(), 2.0))
-            {
-                SpecimenGripperServo.setPosition(Megalodog.specimenServoClosed);  }
-
-        }
-
-
-        if(WallFinder.isPressed() && checkIsLiftUp())
-        {
-            if (eventTracker.doEvent("Wall Finder Specimen Hang", currentTimer.seconds(), 1.0))
-            {
-                allowDriving = false;
-                stopWheels();
-                sleep(200);
-                Lift.setTargetPosition(Megalodog.liftPullSpecimenFromUpperBar);
-                //schedule an open of specimen gripper
-                triggerSpecimenGripperOpen = true;
-
-            }
-        }
-
-
-        if (gamepad2.dpad_down) {
-            if(currentTimer.seconds() < 100)
-            {checkExtensionServoSafety();}
-            deliveryBoxServoPosition = Megalodog.deliveryServoHome;
-            DeliveryBoxServo.setPosition(deliveryBoxServoPosition);
-            Lift.setTargetPosition(30);
-        } else if (gamepad2.dpad_left) {
-            checkExtensionServoSafety();
-            Lift.setTargetPosition(Megalodog.liftLowerBasket);
-        } else if (gamepad2.dpad_up) {
-            checkExtensionServoSafety();
-            Lift.setTargetPosition(Megalodog.liftUpperBasket);
-        } else if (gamepad2.dpad_right) {
-            checkExtensionServoSafety();
-            Lift.setTargetPosition(Megalodog.liftUpperSpecimenBar);
-        }
         if(-gamepad2.right_stick_y > 0.2)
         {
             if(eventTracker.doEvent("Extension Box Rotator",currentTimer.seconds(),0.05)) {
@@ -276,11 +163,6 @@ public class SharkAttackTeleop extends LinearOpMode {
                 ExtensionBoxRotation.setPosition(currentExtensionBoxRotationPosition);
                 telemetry.addData("extension rotate:", currentExtensionBoxRotationPosition);
             }
-        }
-        if(gamepad2.ps)
-        {
-            //hangRobot();
-            ExtensionServo.setPosition(.5);
         }
         if(-gamepad2.right_stick_y < -0.2)
         {
@@ -291,36 +173,6 @@ public class SharkAttackTeleop extends LinearOpMode {
                 telemetry.addData("extension rotate:", currentExtensionBoxRotationPosition);
             }
         }
-        if(-gamepad2.left_stick_y > 0.2)
-        {
-            if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.10))
-            {
-                if (extensionSliderPosition < Megalodog.extensionSliderMax-99) {
-                    ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
-                    extensionSliderPosition += 100;
-                    ExtensionSlider.setTargetPosition(extensionSliderPosition);
-                }
-            }
-        }
-        if(-gamepad2.left_stick_y < -0.2)
-        {
-            if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.10)) {
-                if (extensionSliderPosition > 100) {
-                    ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
-                    ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
-                    extensionSliderPosition -= 100;
-                    if(extensionSliderPosition < 150)
-                    {
-                        //extensionSliderPosition = 20;
-                        resetExtensionSlider(600);
-                    }
-                    else {
-                        ExtensionSlider.setTargetPosition(extensionSliderPosition);
-                    }
-                }
-            }
-        }
-
 
 
     }
@@ -376,7 +228,16 @@ public class SharkAttackTeleop extends LinearOpMode {
         SpecimenGripperServo.setPosition(Megalodog.specimenServoStarting);
         GripperRotatorServo.setPosition(Megalodog.gripperRotatorStarting);
         ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
-        setLightsRed();
+        RedLEDLeft.setState(true);
+        RedLEDRight.setState(true);
+        GreenLEDRight.setState(true);
+        GreenLEDLeft.setState(true);
+
+        RedLEDLeft.setState(true);
+        GreenLEDLeft.setState(false);
+
+        GreenLEDRight.setState(true);
+        RedLEDRight.setState(false);
 
     }
 
@@ -389,12 +250,8 @@ public class SharkAttackTeleop extends LinearOpMode {
         gamepad1_TriggersValue = gamepad1.right_trigger - gamepad1.left_trigger;
         if(Math.abs(gamepad1_RightStickYValue) > 0.2)
         {
-           checkExtensionBoxForDrive();
+            checkExtensionBoxForDrive();
            ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
-        }
-        if(Math.abs(gamepad1_LeftStickYValue) > 0.2 && checkIsExtensionHome())
-        {
-            ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
         }
         if (gamepad1_RightStickYValue != 0 || gamepad1_RightStickXValue != 0 || gamepad1_LeftStickYValue != 0 || gamepad1_LeftStickXValue != 0 || gamepad1_TriggersValue != 0) {
             // Set robot's move forward(+) or backwards(-) power
@@ -501,7 +358,7 @@ public class SharkAttackTeleop extends LinearOpMode {
         long maxDuration = safetyDuration; // Maximum duration in milliseconds (3 seconds)
 
         while(!ExtensionLimit.isPressed()) {
-            ExtensionSlider.setPower(-0.8);
+            ExtensionSlider.setPower(-0.5);
             if (System.currentTimeMillis() - startTime > maxDuration) { break;}
         }
         ExtensionSlider.setPower(0);
@@ -602,21 +459,5 @@ public class SharkAttackTeleop extends LinearOpMode {
         FrontRightWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
     }
 
-    public void setLightsGreen()
-    {
-        RedLEDLeft.setState(false);
-        GreenLEDLeft.setState(true);
-
-        GreenLEDRight.setState(true);
-        RedLEDRight.setState(false);
-    }
-    public void setLightsRed()
-    {
-        RedLEDLeft.setState(true);
-        GreenLEDLeft.setState(false);
-
-        GreenLEDRight.setState(false);
-        RedLEDRight.setState(true);
-    }
 
 }

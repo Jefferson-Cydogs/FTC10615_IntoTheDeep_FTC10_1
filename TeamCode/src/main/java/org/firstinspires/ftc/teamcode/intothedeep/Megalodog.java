@@ -24,11 +24,11 @@ public class Megalodog extends MegalodogChassis {
     public final static int liftHangOnUpperBar = 1000;
     // .89 was good when angled higher
     //  .93 was config servo at lower angle
-    public final static double extensionServoFloor = 0.021;
-    public final static double extensionServoDump = 0.8;
+    public final static double extensionServoFloor = 0.025;
+    public final static double extensionServoDump = 0.7;
     public final static double extensionServoSafetyPosition = 0.2;
-    public final static double deliveryServoHome = 0.88;
-    public final static double deliveryServoDump = 0.17;
+    public final static double deliveryServoHome = 0.69;
+    public final static double deliveryServoDump = 0.13;
     public final static double specimenServoOpen = 0.4;
     public final static double specimenServoClosed = 0.527;
     public final static double specimenServoStarting = 0.527;
@@ -38,6 +38,7 @@ public class Megalodog extends MegalodogChassis {
     public final static double gripperRotatorDeployed = 0.742;
     public final static double gripperRotatorDowntoGrab = 0.75;
     public final static double extensionBoxRotatorStarting = 0.425;
+    public final static double extensionBoxRotatorDumping = 0.6;
 
     private double extensionServoPosition;
     private double deliveryBoxServoPosition;
@@ -47,11 +48,12 @@ public class Megalodog extends MegalodogChassis {
     private TouchSensor LiftLimit;
     private TouchSensor LiftLimit2;
     private TouchSensor WallFinder;
-    private Servo ExtensionServo;
-    private Servo DeliveryBoxServo;
-    private Servo GripperRotatorServo;
+    public Servo ExtensionServo;
+    public Servo DeliveryBoxServo;
+    public Servo GripperRotatorServo;
+    public Servo ExtensionBoxRotation;
 
-    private CRServo IntakeBoxServo;
+    public CRServo IntakeBoxServo;
     private DcMotor ExtensionSlider;
     public Servo SpecimenGripperServo;
     private LinearOpMode myOpMode;
@@ -80,6 +82,7 @@ public class Megalodog extends MegalodogChassis {
         LiftLimit = myOpMode.hardwareMap.get(TouchSensor.class, "LiftLimit");
         LiftLimit2 = myOpMode.hardwareMap.get(TouchSensor.class, "LiftLimit2");
         WallFinder = myOpMode.hardwareMap.get(TouchSensor.class, "WallFinder");
+        ExtensionBoxRotation = myOpMode.hardwareMap.get(Servo.class, "ExtensionBoxRotator");
 
         SpecimenGripperServo.setDirection(Servo.Direction.REVERSE);
         GripperRotatorServo.setDirection(Servo.Direction.REVERSE);
@@ -97,6 +100,7 @@ public class Megalodog extends MegalodogChassis {
         deliveryBoxServoPosition = Megalodog.deliveryServoHome;
         DeliveryBoxServo.setPosition(Megalodog.deliveryServoHome);
         SpecimenGripperServo.setPosition(Megalodog.specimenServoStarting);
+        ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
         if(deploySpecimenGripper) {
             GripperRotatorServo.setPosition(Megalodog.gripperRotatorDeployed);
         }
@@ -179,7 +183,9 @@ public class Megalodog extends MegalodogChassis {
 
     public void ExchangeSample(int wait)
     {
-        IntakeBoxServo.setPower(-.18);
+        IntakeBoxServo.setPower(-.2);  // was -.18
+        myOpMode.sleep(1000); // was 1000
+        IntakeBoxServo.setPower(.2);
         myOpMode.sleep(1000);
         IntakeBoxServo.setPower(0);
         ExtensionServo.setPosition(extensionServoSafetyPosition);
@@ -195,12 +201,11 @@ public class Megalodog extends MegalodogChassis {
     public void ScootAndScoop(int wait, int scootDistance)
     {
         ExtensionServo.setPosition(extensionServoFloor);
-        myOpMode.sleep(200);
-        IntakeBoxServo.setPower(.08);
-        TurnIntakeOn(.16);
-        MoveStraight(scootDistance,.2,300);
+        TurnIntakeOn(.22);
+        //myOpMode.sleep(100); // was 200
+        MoveStraight(scootDistance,.2,100);
         ExtensionServo.setPosition(extensionServoFloor-0.018);
-        myOpMode.sleep(800);
+        myOpMode.sleep(1000);
         ExtensionServo.setPosition(extensionServoFloor);
         TurnIntakeOff();
         myOpMode.sleep(wait);
@@ -246,7 +251,6 @@ public class Megalodog extends MegalodogChassis {
 
         deliveryBoxServoPosition = deliveryServoHome;
         DeliveryBoxServo.setPosition(deliveryBoxServoPosition);
-        myOpMode.sleep(100);
         Returnlift(wait);
 
     }
@@ -271,7 +275,7 @@ public class Megalodog extends MegalodogChassis {
         Lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Lift.setTargetPosition(0);
         Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Lift.setPower(0.85);
+        Lift.setPower(liftVelocity);
     }
 
     private void resetExtensionSlider(long safetyDuration)

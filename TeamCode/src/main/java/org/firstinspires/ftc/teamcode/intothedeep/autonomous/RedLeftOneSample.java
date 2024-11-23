@@ -23,9 +23,7 @@ public class RedLeftOneSample extends LinearOpMode {
     public void runOpMode() {
 
         double autonSpeed = 0.35;
-        int deliveryBoxDumpWaitTime = 1100;
-
-        // this lets us see how long the op mode has run
+        int deliveryBoxDumpWaitTime = 900;
 
         Megalodog myBot = new Megalodog(this);
         myBot.InitializeDevices();
@@ -39,49 +37,75 @@ public class RedLeftOneSample extends LinearOpMode {
 
             // 1st sample
             myBot.InitializePositions(true, false);
-            myBot.RaiseLift(Megalodog.liftUpperBasket,1300);
-            myBot.MoveStraight(-325,.2, 200);
+            myBot.RaiseLift(Megalodog.liftUpperBasket,300);
+            myBot.MoveStraight(-470,.25, 200); // was 1200, velocity .2
             myBot.DumpDeliveryBox(deliveryBoxDumpWaitTime);
-            myBot.MoveStraight(210,autonSpeed,100);  // was 85
-            myBot.LiftMoveToHome(450);  // changed from 600 in good run
+            myBot.MoveStraight(210,autonSpeed,100);
+            myBot.LiftMoveToHome(200);  // changed from 600 in good run//  450 last time
 
             // 2nd sample
             myBot.StrafeLeft(50,autonSpeed,200);
-            myBot.RotateLeft(92,autonSpeed,300);
-            myBot.MoveStraight(335,autonSpeed,300);
+            myBot.RotateLeft(94,autonSpeed,200); // was 300
+            myBot.TurnIntakeOn(.22);
+            myBot.MoveStraight(390,autonSpeed,100); // was 200 wait
 
 
             // testing adjustment
-            myBot.RotateLeft(10, .5, 150);
+            myBot.RotateLeft(12, .5, 100); // was 150
 
-            myBot.ScootAndScoop(200, 230);
+            myBot.ScootAndScoop(50, 200); // was 230 wait
+            myBot.ExchangeServoRaise(100);
             myBot.RotateRight(36,autonSpeed,200); // changed from 20
-            myBot.ExchangeServoRaise(200);
-            myBot.MoveStraight(-480,.4,100);
+
+            myBot.MoveStraight(-485,.3,100);
             myBot.ExchangeSample(0);
-            myBot.RotateRight(22,autonSpeed,100);
-      //      myBot.StrafeRight(20,autonSpeed,100);
-            myBot.RaiseLift(Megalodog.liftUpperBasket,1700);
+
+          //  myBot.RotateRight(22,autonSpeed,100);
+         //   myBot.RaiseLift(Megalodog.liftUpperBasket,1700);
+            myBot.RaiseLift(Megalodog.liftUpperBasket,100);
+            myBot.RotateRight(27,autonSpeed,900);
+
+
             myBot.DumpDeliveryBox(deliveryBoxDumpWaitTime);
-            myBot.MoveStraight(115,autonSpeed,200);
-            myBot.LiftMoveToHome(1000);
+            myBot.MoveStraight(110,autonSpeed,200);
+            myBot.LiftMoveToHome(300); // was 1000
 
             // third sample
-            myBot.RotateLeft(49,autonSpeed,200);
-            myBot.MoveStraight(185,.4,300);
+            myBot.RotateLeft(67.5,autonSpeed,200);
+            myBot.MoveStraight(220,.4,300);
 
             // testing adjustment
-            myBot.RotateLeft(15, .5, 150);
+            //myBot.RotateLeft(15, .5, 150);
 
-            myBot.ScootAndScoop(200, 240);
-            myBot.RotateRight(39,autonSpeed,100);  // was 35
-            myBot.ExchangeServoRaise(200);
-            myBot.StrafeRight(62,autonSpeed,300);
-            myBot.MoveStraight(-420,autonSpeed,0);
-            myBot.ExchangeSample(100);
-            myBot.RaiseLift(Megalodog.liftUpperBasket,2200);
+            myBot.ScootAndScoop(50, 200);  // was 240 wait
+            myBot.ExchangeServoRaise(100);
+            myBot.RotateRight(38,autonSpeed,100);  // was 35
+            myBot.StrafeRight(55,autonSpeed,300); // was 62
+
+            //This was the exchange sample function, built the move straight into it
+            myBot.IntakeBoxServo.setPower(-.14);  // was -.18
+            myBot.MoveStraight(-405,autonSpeed,200);
+            myBot.IntakeBoxServo.setPower(0);
+            myBot.ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
+
+            myBot.RaiseLift(Megalodog.liftUpperBasket,1400); // was 2200
             myBot.DumpDeliveryBox(deliveryBoxDumpWaitTime);
-            myBot.LiftMoveToHome(1000);
+            myBot.LiftMoveToHome(500);  //was 1000
+
+            // fourth sample!
+            myBot.RotateLeft(41, autonSpeed, 100);
+            myBot.MoveStraight(225, autonSpeed, 100);
+            myBot.ScootAndScoop(50, 220);  // was 240 wait
+            myBot.ExchangeServoRaise(100);
+            myBot.RotateRight(19, autonSpeed, 100);
+            myBot.ExchangeSample(0);
+            myBot.MoveStraight(-350, autonSpeed, 100);
+
+            myBot.RaiseLift(Megalodog.liftUpperBasket,1100);
+            myBot.RotateRight(8, autonSpeed, 100);
+
+            myBot.DumpDeliveryBox(deliveryBoxDumpWaitTime);
+            myBot.LiftMoveToHome(500);  //was 1000
             sleep(2000);
 
           //  sleep(1000);
