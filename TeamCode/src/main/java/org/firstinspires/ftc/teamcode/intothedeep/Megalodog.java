@@ -12,11 +12,11 @@ import org.firstinspires.ftc.teamcode.chassis.MegalodogChassis;
 
 public class Megalodog extends MegalodogChassis {
     public final static int extensionSliderMax = 900;
-    public final static int liftLowerBasket = 1200;
+    public final static int liftLowerBasket = 1300;
     public final static int liftHome = 30;
     public final static int liftUpperBasket = 3200;
     public final static int liftLowerSpecimenBar = 500;
-    public final static int liftUpperSpecimenBar = 2170;
+    public final static int liftUpperSpecimenBar = 2180;
     public final static int liftPullSpecimenFromUpperBar = 1120;  // was 1080
     public final static int liftSnapSpecimen = 200;
     public final static int liftGetSpecimenFromWall = 500;
@@ -24,11 +24,11 @@ public class Megalodog extends MegalodogChassis {
     public final static int liftHangOnUpperBar = 1000;
     // .89 was good when angled higher
     //  .93 was config servo at lower angle
-    public final static double extensionServoFloor = 0.025;
-    public final static double extensionServoDump = 0.7;
-    public final static double extensionServoSafetyPosition = 0.2;
-    public final static double deliveryServoHome = 0.69;
-    public final static double deliveryServoDump = 0.13;
+    public final static double extensionServoFloor = 0.323;  // was higher
+    public final static double extensionServoDump = 1.0;
+    public final static double extensionServoSafetyPosition = 0.45;
+    public final static double deliveryServoHome = 0.77;
+    public final static double deliveryServoDump = 0.23;
     public final static double specimenServoOpen = 0.4;
     public final static double specimenServoClosed = 0.527;
     public final static double specimenServoStarting = 0.527;
@@ -37,7 +37,7 @@ public class Megalodog extends MegalodogChassis {
     public final static double gripperRotatorStarting = 0.44;
     public final static double gripperRotatorDeployed = 0.742;
     public final static double gripperRotatorDowntoGrab = 0.75;
-    public final static double extensionBoxRotatorStarting = 0.425;
+    public final static double extensionBoxRotatorStarting = 0.39;
     public final static double extensionBoxRotatorDumping = 0.6;
 
     private double extensionServoPosition;
