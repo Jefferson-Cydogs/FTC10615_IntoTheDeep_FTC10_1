@@ -101,6 +101,7 @@ public class Megalodog extends MegalodogChassis {
         DeliveryBoxServo.setPosition(Megalodog.deliveryServoHome);
         SpecimenGripperServo.setPosition(Megalodog.specimenServoStarting);
         ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
+        GripperRotatorServo.setPosition(Megalodog.gripperRotatorStarting);
         if(deploySpecimenGripper) {
             GripperRotatorServo.setPosition(Megalodog.gripperRotatorDeployed);
         }
