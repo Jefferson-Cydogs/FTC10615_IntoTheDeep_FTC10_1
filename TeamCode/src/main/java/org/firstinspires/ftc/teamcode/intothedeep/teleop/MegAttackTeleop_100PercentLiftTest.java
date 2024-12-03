@@ -3,21 +3,21 @@ package org.firstinspires.ftc.teamcode.intothedeep.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.core.EventTracker;
 import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
 
 // switch fast and slow drive
-@TeleOp(name="Shark Attack!", group="Teleop")
-public class SharkAttackTeleop extends LinearOpMode {
+@TeleOp(name="MEG Attack! 100% Lift DANGER", group="Teleop")
+public class MegAttackTeleop_100PercentLiftTest extends LinearOpMode {
 
     private DcMotor BackLeftWheel;
     private DcMotor FrontLeftWheel;
@@ -65,8 +65,9 @@ public class SharkAttackTeleop extends LinearOpMode {
     private boolean allowDriving = true;
 
     private double currentExtensionBoxRotationPosition = Megalodog.extensionBoxRotatorStarting;
+    private double currentExtensionPosition = Megalodog.extensionServoSafetyPosition;
     private double extensionBoxRotationSpeed = 0.035;
-
+    private double extensionBoxSpeed = 0.035;
     double extensionBoxJoystick;
 
     private ElapsedTime currentTimer;
@@ -167,6 +168,35 @@ public class SharkAttackTeleop extends LinearOpMode {
                 GripperRotatorServo.setPosition(Megalodog.gripperRotatorDeployed);
             }
         }
+        if(gamepad1.dpad_up)
+        {
+            if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.10))
+            {
+                if (extensionSliderPosition < Megalodog.extensionSliderMax-99) {
+                    ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
+                    extensionSliderPosition += 100;
+                    ExtensionSlider.setTargetPosition(extensionSliderPosition);
+                }
+            }
+        }
+        if(gamepad1.dpad_down)
+        {
+            if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.10)) {
+                if (extensionSliderPosition > 100) {
+                    ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
+                    ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
+                    extensionSliderPosition -= 100;
+                    if(extensionSliderPosition < 150)
+                    {
+                        //extensionSliderPosition = 20;
+                        resetExtensionSlider(600);
+                    }
+                    else {
+                        ExtensionSlider.setTargetPosition(extensionSliderPosition);
+                    }
+                }
+            }
+        }
 
     }
     private void manageManipulatorControls()
@@ -180,10 +210,7 @@ public class SharkAttackTeleop extends LinearOpMode {
         }
         if(gamepad2.square) // extension to floor
         {
-            if(checkIsIntakeUp())
-            {
-                ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
-            }
+            ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
             ExtensionServo.setPosition(Megalodog.extensionServoFloor);
         }
         if(triggerSpecimenGripperOpen && Lift.getCurrentPosition() < Megalodog.liftPullSpecimenFromUpperBar+30)
@@ -268,6 +295,11 @@ public class SharkAttackTeleop extends LinearOpMode {
             checkExtensionServoSafety();
             Lift.setTargetPosition(Megalodog.liftUpperSpecimenBar);
         }
+        if(gamepad2.ps)
+        {
+            //hangRobot();
+            ExtensionServo.setPosition(.5);
+        }
         if(-gamepad2.right_stick_y > 0.2)
         {
             if(eventTracker.doEvent("Extension Box Rotator",currentTimer.seconds(),0.05)) {
@@ -276,11 +308,6 @@ public class SharkAttackTeleop extends LinearOpMode {
                 ExtensionBoxRotation.setPosition(currentExtensionBoxRotationPosition);
                 telemetry.addData("extension rotate:", currentExtensionBoxRotationPosition);
             }
-        }
-        if(gamepad2.ps)
-        {
-            //hangRobot();
-            ExtensionServo.setPosition(.5);
         }
         if(-gamepad2.right_stick_y < -0.2)
         {
@@ -293,31 +320,20 @@ public class SharkAttackTeleop extends LinearOpMode {
         }
         if(-gamepad2.left_stick_y > 0.2)
         {
-            if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.10))
-            {
-                if (extensionSliderPosition < Megalodog.extensionSliderMax-120) {
-                    ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
-                    extensionSliderPosition += 120;
-                    ExtensionSlider.setTargetPosition(extensionSliderPosition);
-                }
+            if(eventTracker.doEvent("Extension Box Move",currentTimer.seconds(),0.05)) {
+                currentExtensionPosition += extensionBoxSpeed;
+                currentExtensionPosition = Math.max(Megalodog.extensionServoFloor, Math.min(currentExtensionPosition, Megalodog.extensionServoDump));
+                ExtensionServo.setPosition(currentExtensionPosition);
+                telemetry.addData("extension rotate:", currentExtensionPosition);
             }
         }
         if(-gamepad2.left_stick_y < -0.2)
         {
-            if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.10)) {
-                if (extensionSliderPosition > 120) {
-                    ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
-                    ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
-                    extensionSliderPosition -= 120;
-                    if(extensionSliderPosition < 150)
-                    {
-                        //extensionSliderPosition = 20;
-                        resetExtensionSlider(600);
-                    }
-                    else {
-                        ExtensionSlider.setTargetPosition(extensionSliderPosition);
-                    }
-                }
+            if(eventTracker.doEvent("Extension Box Move",currentTimer.seconds(),0.05)) {
+                currentExtensionPosition -= extensionBoxSpeed;
+                currentExtensionPosition = Math.max(Megalodog.extensionServoFloor, Math.min(currentExtensionPosition, Megalodog.extensionServoDump));
+                ExtensionServo.setPosition(currentExtensionPosition);
+                telemetry.addData("extension rotate:", currentExtensionPosition);
             }
         }
 
@@ -545,7 +561,7 @@ public class SharkAttackTeleop extends LinearOpMode {
         // 537.7 is
         //double liftMaxVelocity = (312 / 60) * 537.7;
 
-        Lift.setPower(.8);
+        Lift.setPower(1.0);
     }
 
     private void checkExtensionServoSafety()

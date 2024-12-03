@@ -66,8 +66,8 @@ public class MegAttackTeleop extends LinearOpMode {
 
     private double currentExtensionBoxRotationPosition = Megalodog.extensionBoxRotatorStarting;
     private double currentExtensionPosition = Megalodog.extensionServoSafetyPosition;
-    private double extensionBoxRotationSpeed = 0.035;
-    private double extensionBoxSpeed = 0.035;
+    private double extensionBoxRotationSpeed = 0.04;
+    private double extensionBoxSpeed = 0.04;
     double extensionBoxJoystick;
 
     private ElapsedTime currentTimer;
