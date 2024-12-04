@@ -88,7 +88,7 @@ public class RedLeftOneSampleV2 extends LinearOpMode {
 
     // third sample
             myBot.RotateLeft(66.2,autonSpeed,200);
-            myBot.MoveStraight(190,.4,300);
+            myBot.MoveStraight(185,.4,300);
 
             // testing adjustment
             //myBot.RotateLeft(15, .5, 150);
@@ -127,7 +127,7 @@ public class RedLeftOneSampleV2 extends LinearOpMode {
 
     // fourth sample!
             myBot.MoveStraight(190, autonSpeed, 100);
-            myBot.RotateLeft(67, autonSpeed, 100);
+            myBot.RotateLeft(70, autonSpeed, 100);
             myBot.MoveStraight(20, autonSpeed, 100);
 
            // myBot.ScootAndScoop(50, 220);  // was 240 wait

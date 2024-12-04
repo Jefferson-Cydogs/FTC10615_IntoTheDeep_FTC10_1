@@ -107,6 +107,22 @@ public class Megalodog extends MegalodogChassis {
         }
     }
 
+    public boolean MoveUntilButton(double velocity, int maxDistance)
+    {
+        int distanceTravelled = 0;
+        int moveDistance = 15;
+        if(maxDistance<0)
+        {
+            moveDistance *= -1;
+        }
+        while(!WallFinder.isPressed() && distanceTravelled < Math.abs(maxDistance))
+        {
+            MoveStraight(moveDistance, velocity, 0);
+            distanceTravelled += 15;
+            myOpMode.sleep(200);
+        }
+        return (distanceTravelled < maxDistance);
+    }
 
     public void ReverseIntake () {
 //It turns the continues servo reverse
@@ -131,7 +147,9 @@ public class Megalodog extends MegalodogChassis {
         //turn servo and raise lift
         Lift.setPower(0.5);
         Lift.setTargetPosition(height);
-        myOpMode.sleep(waitBetweenDropAndLetGo);
+        //myOpMode.sleep(waitBetweenDropAndLetGo);
+        while (Lift.getCurrentPosition() > height+30) { // wait
+        }
         LetGoOfSpecimen(0);
         Lift.setPower(0.85);
         myOpMode.sleep(waitAfter);
