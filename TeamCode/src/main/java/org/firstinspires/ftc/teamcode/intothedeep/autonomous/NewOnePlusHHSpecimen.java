@@ -44,8 +44,9 @@ public class NewOnePlusHHSpecimen extends LinearOpMode {
             myBot.RotateLeft(180, .4, 300);
             // get specimen from wall
                 myBot.MoveStraight(-420, .25, 100);
-                myBot.MoveStraight(-110, .12, 700);
                 myBot.OpenGripperForWall(0);
+                myBot.MoveStraight(-130, .12, 700);
+
                 myBot.MoveStraight(34, .12, 200);
                 myBot.GrabSpecimenAndLift(500);  // cannot lower wait
                 myBot.LevelGripper(0);
@@ -56,8 +57,8 @@ public class NewOnePlusHHSpecimen extends LinearOpMode {
             myBot.StrafeLeft(970, .35, 200);  // 840 to center
             myBot.RaiseLift(Megalodog.liftUpperSpecimenBar,100);
             myBot.RotateLeft(176,.45, 200);
-            myBot.MoveStraight(-460,.18,200);  // was -705
-            myBot.MoveUntilButton(.4,-105);
+            myBot.MoveStraight(-430,.18,200);  // was -705
+            myBot.MoveUntilButton(.4,-135);
             myBot.HookAndLetGo(Megalodog.liftPullSpecimenFromUpperBar, 1050, 200);
 
 

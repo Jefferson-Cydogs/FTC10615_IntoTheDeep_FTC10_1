@@ -51,14 +51,43 @@ public class NewOneSpecimenPushThree extends LinearOpMode {
             myBot.RotateRight(7, .4, 200);
             myBot.MoveStraight(-1040, .4, 200);
 
-            // go back and get 2nd and 3rd floor sample
+            // go back and get 2nd
             myBot.MoveStraight(1040, .4, 200);
-            myBot.StrafeRight(260, .4, 200);
+            myBot.StrafeRight(160, .4, 200);
             myBot.RotateRight(5, .4, 200);
+            myBot.OpenGripperForWall(0);
+
+            // push to wall and grab next
             myBot.MoveStraight(-1040, .4, 200);
-            myBot.MoveStraight(1080, .4, 200);
-            myBot.StrafeRight(150, .4, 200);
-            myBot.MoveStraight(-1040, .4, 200);
+            myBot.MoveStraight(-90, .12, 700);
+            myBot.MoveStraight(30, .12, 200);
+            myBot.GrabSpecimenAndLift(500);  // cannot lower wait
+            myBot.LevelGripper(0);
+
+            // Go place HH specimen
+            myBot.MoveStraight(250, .25, 200);  // 734 to bar
+            myBot.RotateLeft(5, .4, 200);
+            myBot.StrafeLeft(970, .35, 200);  // 840 to center
+            myBot.RaiseLift(Megalodog.liftUpperSpecimenBar,100);
+            myBot.RotateLeft(176,.45, 200);
+            myBot.MoveStraight(-390,.18,200);  // was -705
+            myBot.MoveUntilButton(.4,-135);
+            myBot.HookAndLetGo(Megalodog.liftPullSpecimenFromUpperBar, 1050, 200);
+
+
+            // Go Park
+            myBot.MoveStraight(420,.4 ,200);
+            myBot.DeployExtensionServo(200);
+            myBot.RotateRight(3,.4, 200);
+            myBot.PutGripperAway();
+            myBot.RaiseLift(Megalodog.liftHome, 200);
+            myBot.StrafeLeft(1300, 0.7, 300);
+            myBot.RotateRight(180, .7, 300);
+            myBot.MoveStraight(-80, .7, 2000);
+
+    //        myBot.MoveStraight(1080, .4, 200);
+    //        myBot.StrafeRight(150, .4, 200);
+    //        myBot.MoveStraight(-1040, .4, 200);
 
 
 

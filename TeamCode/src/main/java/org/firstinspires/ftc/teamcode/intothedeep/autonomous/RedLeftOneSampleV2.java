@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
 
 // The 'extends LinearOpMode' is needed so this code can run the build in op mode code from FIRST.
 //    @Autonomous puts this code in the autonomous category on driver station
-@Autonomous(name="Left Samples 2", group="Autonomous", preselectTeleOp = "The Final Countdown")
+@Autonomous(name="Left Samples 2", group="Autonomous", preselectTeleOp = "Shark Attack!")
 public class RedLeftOneSampleV2 extends LinearOpMode {
 
     /* declare variables
@@ -52,11 +52,8 @@ public class RedLeftOneSampleV2 extends LinearOpMode {
 
             // SCOOT AND SCOOP
             myBot.ExtensionServo.setPosition(Megalodog.extensionServoFloor);
-
-            //myOpMode.sleep(100); // was 200
             myBot.MoveStraight(230,.22,100);
             pressDowntoGrab(1100);
-
             myBot.TurnIntakeOn(.07);
             myBot.RotateRight(38,autonSpeed,100); // changed from 20
 
@@ -66,7 +63,7 @@ public class RedLeftOneSampleV2 extends LinearOpMode {
             myBot.ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorDumping);
             myBot.MoveStraight(-475,.3,100);
             myBot.TurnIntakeOff();
-            myBot.IntakeBoxServo.setPower(-.24);  // was -.18
+            myBot.IntakeBoxServo.setPower(-.29);  // was -.18
             sleep(700); // was 1000
             //myBot.IntakeBoxServo.setPower(0);
             //sleep(100);
@@ -87,7 +84,7 @@ public class RedLeftOneSampleV2 extends LinearOpMode {
             myBot.LiftMoveToHome(300); // was 1000
 
     // third sample
-            myBot.RotateLeft(66.2,autonSpeed,200);
+            myBot.RotateLeft(67,autonSpeed,200);
             myBot.MoveStraight(185,.4,300);
 
             // testing adjustment
@@ -106,12 +103,12 @@ public class RedLeftOneSampleV2 extends LinearOpMode {
             myBot.TurnIntakeOn(.05);
             myBot.ExchangeServoRaise(100);
             myBot.TurnIntakeOff();
-            myBot.RotateRight(39,autonSpeed,100);  // was 35
+            myBot.RotateRight(40,autonSpeed,100);  // was 35
             myBot.ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorDumping);
             myBot.StrafeRight(50,autonSpeed,200); // was 62
 
             //This was the exchange sample function, built the move straight into it
-            myBot.IntakeBoxServo.setPower(-.24);  // was -.18
+            myBot.IntakeBoxServo.setPower(-.29);  // was -.18
             myBot.MoveStraight(-415,autonSpeed,400);
             //myBot.IntakeBoxServo.setPower(0);
             //sleep(100);
@@ -127,7 +124,7 @@ public class RedLeftOneSampleV2 extends LinearOpMode {
 
     // fourth sample!
             myBot.MoveStraight(190, autonSpeed, 100);
-            myBot.RotateLeft(70, autonSpeed, 100);
+            myBot.RotateLeft(71, autonSpeed, 100);
             myBot.MoveStraight(20, autonSpeed, 100);
 
            // myBot.ScootAndScoop(50, 220);  // was 240 wait
@@ -171,7 +168,7 @@ public class RedLeftOneSampleV2 extends LinearOpMode {
 
     private void pressDowntoGrab(int intakeWaitTime)
     {
-        myBot.ExtensionServo.setPosition(Megalodog.extensionServoFloor-0.08); // was -0.018
+        myBot.ExtensionServo.setPosition(Megalodog.extensionServoFloor-0.09); // was -0.018
         myBot.ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting-0.035);
         sleep(intakeWaitTime);
         myBot.ExtensionServo.setPosition(Megalodog.extensionServoFloor);

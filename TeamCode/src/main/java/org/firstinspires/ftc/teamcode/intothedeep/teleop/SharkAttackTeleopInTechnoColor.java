@@ -3,21 +3,22 @@ package org.firstinspires.ftc.teamcode.intothedeep.teleop;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
+import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.ColorSensor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.core.EventTracker;
 import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
 
 // switch fast and slow drive
-@TeleOp(name="Shark Attack!", group="Teleop")
-public class SharkAttackTeleop extends LinearOpMode {
+@TeleOp(name="Shark Attack in TechnoColor!", group="Teleop")
+public class SharkAttackTeleopInTechnoColor extends LinearOpMode {
 
     private DcMotor BackLeftWheel;
     private DcMotor FrontLeftWheel;
@@ -60,7 +61,7 @@ public class SharkAttackTeleop extends LinearOpMode {
     private double lowSpeedDrive = 0.3;
     private double rotateSpeedDrive = 0.7;
     private int liftGoToPosition = 0;
-    private double currentIntakePower = 0.3;
+    private double currentIntakePower = Megalodog.continuousIntakePower;
     private boolean triggerSpecimenGripperOpen = false;
     private boolean allowDriving = true;
 
@@ -90,7 +91,14 @@ public class SharkAttackTeleop extends LinearOpMode {
 
         initializeWheels();
         initializeDevices();
+        int gain;
+        boolean SampleInsideIntake;
+        NormalizedRGBA normalizedColors;
+        int color;
+        float hue;
 
+        gain = 2;
+        SampleInsideIntake = false;
 
         currentTimer = new ElapsedTime();
 
@@ -203,13 +211,13 @@ public class SharkAttackTeleop extends LinearOpMode {
 
         if (gamepad2.right_trigger>0.4) {   // INTAKE
             if(checkIsIntakeUp()) { currentIntakePower = Megalodog.continuousIntakeDumpPower;}
-            else {currentIntakePower = 0.3;}
+            else {currentIntakePower = Megalodog.continuousIntakePower;}
 
             IntakeBoxServo.setPower(currentIntakePower);
         }
         else if(gamepad2.left_trigger>0.4) {
             if(checkIsIntakeUp()) { currentIntakePower = Megalodog.continuousIntakeDumpPower;}
-            else {currentIntakePower = 0.3;}
+            else {currentIntakePower = Megalodog.continuousIntakePower;}
 
             IntakeBoxServo.setPower(-currentIntakePower);
         }
@@ -630,6 +638,13 @@ public class SharkAttackTeleop extends LinearOpMode {
 
         GreenLEDRight.setState(true);
         RedLEDRight.setState(true);
+    }
+
+    public void manageColorSensor()
+    {
+
+
+
     }
 
 }

@@ -174,7 +174,7 @@ public class Megalodog extends MegalodogChassis {
     {
         GripperRotatorServo.setPosition(gripperRotatorDowntoGrab);
         myOpMode.sleep(100);
-        SpecimenGripperServo.setPosition(specimenServoOpen);
+        SpecimenGripperServo.setPosition(specimenServoOpen-0.15);
         myOpMode.sleep(wait);
 
     }
