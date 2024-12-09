@@ -657,14 +657,9 @@ public class SharkAttackTeleopInTechnoColor extends LinearOpMode {
 
     }*/
 
-    public boolean sampleDetection()
+    public boolean sampleDetected()
     {
-        if (((OpticalDistanceSensor) colorSensor).getLightDetected() > 0.1) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return ((OpticalDistanceSensor) colorSensor).getLightDetected() > 0.1;
     }
 
 }
