@@ -16,17 +16,17 @@ public class Megalodog extends MegalodogChassis {
     public final static int liftHome = 30;
     public final static int liftUpperBasket = 3200;
     public final static int liftLowerSpecimenBar = 500;
-    public final static int liftUpperSpecimenBar = 2180;
-    public final static int liftPullSpecimenFromUpperBar = 1120;  // was 1080
+    public final static int liftUpperSpecimenBar = 2165;
+    public final static int liftPullSpecimenFromUpperBar = 1120;  // 1060 less than upper spec bar
     public final static int liftSnapSpecimen = 200;
     public final static int liftGetSpecimenFromWall = 500;
     public final static int liftHangOnLowerBar = 2000;
     public final static int liftHangOnUpperBar = 1000;
     // .89 was good when angled higher
     //  .93 was config servo at lower angle
-    public final static double extensionServoFloor = 0.323;  // was higher
-    public final static double extensionServoDump = 1.0;
-    public final static double extensionServoSafetyPosition = 0.45;
+    public final static double extensionServoFloor = 0.835;
+    public final static double extensionServoDump = 0.205;
+    public final static double extensionServoSafetyPosition = 0.635;
     public final static double deliveryServoHome = 0.77;
     public final static double deliveryServoDump = 0.23;
     public final static double specimenServoOpen = 0.4;
@@ -37,8 +37,8 @@ public class Megalodog extends MegalodogChassis {
     public final static double gripperRotatorStarting = 0.44;
     public final static double gripperRotatorDeployed = 0.742;
     public final static double gripperRotatorDowntoGrab = 0.75;
-    public final static double extensionBoxRotatorStarting = 0.39;
-    public final static double extensionBoxRotatorDumping = 0.6;
+    public final static double extensionBoxRotatorStarting = 0.46;
+    public final static double extensionBoxRotatorDumping = 0.615;
 
     private double extensionServoPosition;
     private double deliveryBoxServoPosition;
@@ -294,7 +294,8 @@ public class Megalodog extends MegalodogChassis {
         Lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         Lift.setTargetPosition(0);
         Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        Lift.setPower(liftVelocity);
+        double lift_max_velocity = (312 / 60) * 537.7;
+        ((DcMotorEx)Lift).setVelocity(.85*lift_max_velocity);
     }
 
     private void resetExtensionSlider(long safetyDuration)

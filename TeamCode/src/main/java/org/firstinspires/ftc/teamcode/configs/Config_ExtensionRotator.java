@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.configs;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -15,7 +16,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.core.EventTracker;
 import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
 
-// switch fast and slow drive
+
 @TeleOp
 public class Config_ExtensionRotator extends LinearOpMode {
 
@@ -66,7 +67,8 @@ public class Config_ExtensionRotator extends LinearOpMode {
 
     private double currentExtensionBoxRotationPosition = Megalodog.extensionBoxRotatorStarting;
     private double extensionBoxRotationSpeed = 0.035;
-
+    private double currentExtensionBoxPosition = Megalodog.extensionServoSafetyPosition;
+    private double extensionBoxSpeed = 0.035;
     double extensionBoxJoystick;
 
     private ElapsedTime currentTimer;
@@ -173,7 +175,24 @@ public class Config_ExtensionRotator extends LinearOpMode {
                 telemetry.addData("extension rotate:", currentExtensionBoxRotationPosition);
             }
         }
-
+        if(-gamepad2.left_stick_y > 0.2)
+        {
+            if(eventTracker.doEvent("Extension Box",currentTimer.seconds(),0.05)) {
+                currentExtensionBoxPosition += extensionBoxSpeed;
+                currentExtensionBoxPosition = Math.max(0.0, Math.min(currentExtensionBoxPosition, 1.0));
+                ExtensionServo.setPosition(currentExtensionBoxPosition);
+                telemetry.addData("extension arm:", currentExtensionBoxPosition);
+            }
+        }
+        if(-gamepad2.left_stick_y < -0.2)
+        {
+            if(eventTracker.doEvent("Extension Box",currentTimer.seconds(),0.05)) {
+                currentExtensionBoxPosition -= extensionBoxSpeed;
+                currentExtensionBoxPosition = Math.max(0.0, Math.min(currentExtensionBoxPosition, 1.0));
+                ExtensionServo.setPosition(currentExtensionBoxPosition);
+                telemetry.addData("extension arm:", currentExtensionBoxPosition);
+            }
+        }
 
     }
 

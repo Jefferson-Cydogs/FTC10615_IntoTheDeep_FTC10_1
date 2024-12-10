@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.intothedeep.teleop;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.core.EventTracker;
 import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
 
 // switch fast and slow drive
+@Disabled
 @TeleOp(name="MEG Attack! 100% Lift DANGER", group="Teleop")
 public class MegAttackTeleop_100PercentLiftTest extends LinearOpMode {
 

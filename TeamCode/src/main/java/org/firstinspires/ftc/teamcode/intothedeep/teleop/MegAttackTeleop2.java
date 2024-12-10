@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.intothedeep.teleop;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -19,8 +17,8 @@ import org.firstinspires.ftc.teamcode.core.EventTracker;
 import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
 
 // switch fast and slow drive
-@TeleOp(name="MEG Attack!", group="Teleop")
-public class MegAttackTeleop extends LinearOpMode {
+@TeleOp(name="MEG Attack! The Return", group="Teleop")
+public class MegAttackTeleop2 extends LinearOpMode {
 
     private DcMotor BackLeftWheel;
     private DcMotor FrontLeftWheel;
@@ -165,53 +163,54 @@ public class MegAttackTeleop extends LinearOpMode {
         }
         if(gamepad1.cross)
         {
-            if(GripperRotatorServo.getPosition() > Megalodog.gripperRotatorDeployed - 0.1) {
-                SpecimenGripperServo.setPosition(Megalodog.specimenServoClosed);
-                GripperRotatorServo.setPosition(Megalodog.gripperRotatorStarting);
-            }
-            else {
-                GripperRotatorServo.setPosition(Megalodog.gripperRotatorDeployed);
-            }
-        }
-        if(gamepad1.dpad_up)
-        {
-            if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.10))
+            if(eventTracker.doEvent("RotatorDeploy", currentTimer.seconds(), 0.25))
             {
-                if (extensionSliderPosition < Megalodog.extensionSliderMax-99) {
-                    ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
-                    extensionSliderPosition += 100;
-                    ExtensionSlider.setTargetPosition(extensionSliderPosition);
+                if(GripperRotatorServo.getPosition() > Megalodog.gripperRotatorDeployed - 0.1) {
+                    SpecimenGripperServo.setPosition(Megalodog.specimenServoClosed);
+                    GripperRotatorServo.setPosition(Megalodog.gripperRotatorStarting);
+                }
+                else {
+                    GripperRotatorServo.setPosition(Megalodog.gripperRotatorDeployed);
                 }
             }
         }
-        if(gamepad1.dpad_down)
-        {
-            if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.10)) {
-                if (extensionSliderPosition > 100) {
-                    ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
-                    ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
-                    extensionSliderPosition -= 100;
-                    if(extensionSliderPosition < 150)
-                    {
-                        //extensionSliderPosition = 20;
-                        resetExtensionSlider(600);
-                    }
-                    else {
-                        ExtensionSlider.setTargetPosition(extensionSliderPosition);
-                    }
-                }
-            }
+        if (gamepad1.dpad_down) {
+            if(currentTimer.seconds() < 100)
+            {checkExtensionServoSafety();}
+            deliveryBoxServoPosition = Megalodog.deliveryServoHome;
+            DeliveryBoxServo.setPosition(deliveryBoxServoPosition);
+            Lift.setTargetPosition(30);
+        } else if (gamepad1.dpad_left) {
+            AscendMotor.setPower(0);
+            checkExtensionServoSafety();
+            Lift.setTargetPosition(Megalodog.liftLowerBasket);
+        } else if (gamepad1.dpad_up) {
+            AscendMotor.setPower(0);
+            checkExtensionServoSafety();
+            Lift.setTargetPosition(Megalodog.liftUpperBasket);
+        } else if (gamepad1.dpad_right) {
+            AscendMotor.setPower(0);
+            checkExtensionServoSafety();
+            Lift.setTargetPosition(Megalodog.liftUpperSpecimenBar);
         }
-        while(gamepad1.ps)
+
+        while(gamepad1.right_bumper)
         {
             Lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             ((DcMotorEx)Lift).setVelocity(0);
-            ExtensionServo.setPosition(.3);
-            AscendMotor.setPower(-0.7);
+            ExtensionServo.setPosition(.5);
+            AscendMotor.setPower(-0.95);
         }
-        Lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        while(gamepad1.left_bumper)
+        {
+            Lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            ((DcMotorEx)Lift).setVelocity(0);
+            ExtensionServo.setPosition(.5);
+            AscendMotor.setPower(0.7);
+        }
+     //   Lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         AscendMotor.setPower(0);
-        ((DcMotorEx)Lift).setVelocity(0.85*lift_max_velocity);
+     //   ((DcMotorEx)Lift).setVelocity(0.85*lift_max_velocity);
 
     }
     private void manageManipulatorControls()
@@ -226,7 +225,13 @@ public class MegAttackTeleop extends LinearOpMode {
         if(gamepad2.square) // extension to floor
         {
             ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
-            ExtensionServo.setPosition(Megalodog.extensionServoFloor);
+            if(!checkIsExtensionHome())
+            {
+                ExtensionServo.setPosition(Megalodog.extensionServoFloor-.01);
+            }
+            else{
+                ExtensionServo.setPosition(Megalodog.extensionServoFloor);
+            }
         }
         if(triggerSpecimenGripperOpen && Lift.getCurrentPosition() < Megalodog.liftPullSpecimenFromUpperBar+30)
         {
@@ -294,25 +299,35 @@ public class MegAttackTeleop extends LinearOpMode {
         }
 
 
-        if (gamepad2.dpad_down) {
-            AscendMotor.setPower(0);
-            if(currentTimer.seconds() < 100)
-            {checkExtensionServoSafety();}
-            deliveryBoxServoPosition = Megalodog.deliveryServoHome;
-            DeliveryBoxServo.setPosition(deliveryBoxServoPosition);
-            Lift.setTargetPosition(30);
-        } else if (gamepad2.dpad_left) {
-            AscendMotor.setPower(0);
-            checkExtensionServoSafety();
-            Lift.setTargetPosition(Megalodog.liftLowerBasket);
-        } else if (gamepad2.dpad_up) {
-            AscendMotor.setPower(0);
-            checkExtensionServoSafety();
-            Lift.setTargetPosition(Megalodog.liftUpperBasket);
-        } else if (gamepad2.dpad_right) {
-            AscendMotor.setPower(0);
-            checkExtensionServoSafety();
-            Lift.setTargetPosition(Megalodog.liftUpperSpecimenBar);
+
+        if(-gamepad2.left_stick_y > 0.2)
+        {
+            if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.10))
+            {
+                if (extensionSliderPosition < Megalodog.extensionSliderMax-99) {
+                    ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
+                    extensionSliderPosition += 100;
+                    ExtensionSlider.setTargetPosition(extensionSliderPosition);
+                }
+            }
+        }
+        if(-gamepad2.left_stick_y < -0.2)
+        {
+            if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.10)) {
+                if (extensionSliderPosition > 100) {
+                    ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
+                    ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
+                    extensionSliderPosition -= 100;
+                    if(extensionSliderPosition < 150)
+                    {
+                        //extensionSliderPosition = 20;
+                        resetExtensionSlider(600);
+                    }
+                    else {
+                        ExtensionSlider.setTargetPosition(extensionSliderPosition);
+                    }
+                }
+            }
         }
         if(gamepad2.ps)
         {
@@ -337,7 +352,7 @@ public class MegAttackTeleop extends LinearOpMode {
                 telemetry.addData("extension rotate:", currentExtensionBoxRotationPosition);
             }
         }
-        if(-gamepad2.left_stick_y > 0.2)
+        if(gamepad2.dpad_down)
         {
             if(eventTracker.doEvent("Extension Box Move",currentTimer.seconds(),0.05)) {
                 currentExtensionPosition += extensionBoxSpeed;
@@ -346,7 +361,7 @@ public class MegAttackTeleop extends LinearOpMode {
                 telemetry.addData("extension rotate:", currentExtensionPosition);
             }
         }
-        if(-gamepad2.left_stick_y < -0.2)
+        if(gamepad2.dpad_up)
         {
             if(eventTracker.doEvent("Extension Box Move",currentTimer.seconds(),0.05)) {
                 currentExtensionPosition -= extensionBoxSpeed;

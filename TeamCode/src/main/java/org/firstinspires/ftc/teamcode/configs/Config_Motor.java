@@ -35,7 +35,7 @@ public class Config_Motor extends LinearOpMode {
 
         motor1 = initializeMotor("IntakeExtension");
         motor2 = initializeMotor("Lift");
-        motor3 = initializeMotor("FrontLeftWheel");
+        motor3 = initializeMotor("AscendMotor");
         motor4 = initializeMotor("FrontRightWheel");
 
         //set inital taget positions to 0
@@ -68,7 +68,7 @@ public class Config_Motor extends LinearOpMode {
         telemetry.addLine("Select Motor to Test using PlayStation Controller Buttons.\n")
                 .addData("Cross(X)","Intake Extension\n")
                 .addData("Circle(O)","Lift\n")
-                .addData("Square()","Left Front Wheel\n")
+                .addData("Square()","Ascend Motor\n")
                 .addData("Triangle()","Right Front Wheel\n")
                 .addData("Current Selection",selectedMotorName);
         telemetry.update();

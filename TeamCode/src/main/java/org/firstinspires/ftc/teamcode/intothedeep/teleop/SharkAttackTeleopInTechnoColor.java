@@ -2,17 +2,18 @@ package org.firstinspires.ftc.teamcode.intothedeep.teleop;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DigitalChannel;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
-import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.teamcode.core.EventTracker;
 import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
 
@@ -38,13 +39,11 @@ public class SharkAttackTeleopInTechnoColor extends LinearOpMode {
     private CRServo IntakeBoxServo;
     public Servo SpecimenGripperServo;
     private double extensionServoPosition;
-    private DigitalChannel RedLEDLeft;
-    private DigitalChannel RedLEDRight;
-    private DigitalChannel GreenLEDLeft;
-    private DigitalChannel GreenLEDRight;
-
+    private DigitalChannel leftLEDRed;
+    private DigitalChannel leftLEDGreen;
+    private DigitalChannel rightLEDRed;
+    private DigitalChannel rightLEDGreen;
     private ColorSensor colorSensor;
-    private DistanceSensor distanceSensor;
     private double deliveryBoxServoPosition;
     private double specimenServoPosition;
     private float gamepad1_RightStickYValue;
@@ -72,10 +71,10 @@ public class SharkAttackTeleopInTechnoColor extends LinearOpMode {
 
     private ElapsedTime currentTimer;
     private EventTracker eventTracker;
-    private int red;
-    private int green;
-    private int blue;
-    private double distance;
+    // private int red;
+    // private int green;
+    // private int blue;
+    // private double distance;
 
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
@@ -92,16 +91,17 @@ public class SharkAttackTeleopInTechnoColor extends LinearOpMode {
         initializeWheels();
         initializeDevices();
         int gain;
-        boolean SampleInsideIntake;
         NormalizedRGBA normalizedColors;
         int color;
         float hue;
+        boolean SampleInsideIntake;
+        //String detectedColor;
 
         gain = 2;
         SampleInsideIntake = false;
+        //detectedColor="None";
 
         currentTimer = new ElapsedTime();
-
 
         eventTracker = new EventTracker();
 
@@ -109,8 +109,9 @@ public class SharkAttackTeleopInTechnoColor extends LinearOpMode {
         if (opModeIsActive()) {
             // RUN BLOCKS:
             initializePositions();
+            ((NormalizedColorSensor) colorSensor).setGain(gain);
             while (opModeIsActive()) {
-            //    telemetry.clear();
+                //    telemetry.clear();
                 // LOOP BLOCKS:
                 if(allowDriving) {
                     driveChassis();
@@ -119,28 +120,43 @@ public class SharkAttackTeleopInTechnoColor extends LinearOpMode {
                 manageManipulatorControls();
 
                 // get color settings
-
-
-                if(eventTracker.doEvent("Telemetry",currentTimer.seconds(),0.3))
-                {
-
-                    red = colorSensor.red();
-                    green = colorSensor.green();
-                    blue = colorSensor.blue();
-                    distance = distanceSensor.getDistance(DistanceUnit.MM);
-                    if(distance < 10)
-                    {
-                        setLightsGreen();
+                // Read color from the sensor.
+                normalizedColors = ((NormalizedColorSensor) colorSensor).getNormalizedColors();
+                // Convert RGB values to Hue, Saturation, and Value.
+                color = normalizedColors.toColor();
+                hue = JavaUtil.colorToHue(color);
+                // Use hue to determine if it's red, yellow or blue
+                if (((OpticalDistanceSensor) colorSensor).getLightDetected() > 0.1) {
+                    // Sample is in
+                    if (!SampleInsideIntake) {
+                        // Sample wasn't in before new detection
+                        if (hue < 60) {
+                            telemetry.addData("Color", "Red");
+                            setLightsGreen();
+                        } else if (hue <= 90) {
+                            telemetry.addData("Color", "Yellow");
+                            setLightsRed();
+                        } else if (hue >= 210 && hue <= 250) {
+                            telemetry.addData("Color", "Blue");
+                            setLightsGreen();
+                        }
+                        SampleInsideIntake = true;
                     }
-                    else {
-                        setLightsRed();
+                } else {
+                    // Sample is not in
+                    telemetry.addData("Color", "None");
+                    if (SampleInsideIntake) {
+                        // Sample was in before new detection
+                        turnLightsOff();
+                        SampleInsideIntake = false;
                     }
-                //    telemetry.addData("Red:", red);
-                //    telemetry.addData("Green:", green);
-                //    telemetry.addData("Blue:", blue);
-               //     telemetry.addData("Distance(mm):", distance);
-                    telemetry.update();
                 }
+                telemetry.update();
+
+                /*if(eventTracker.doEvent("Telemetry",currentTimer.seconds(),0.3))
+                {
+                    telemetry.update();
+                }*/
             }
         }
     }
@@ -384,7 +400,7 @@ public class SharkAttackTeleopInTechnoColor extends LinearOpMode {
         SpecimenGripperServo.setPosition(Megalodog.specimenServoStarting);
         GripperRotatorServo.setPosition(Megalodog.gripperRotatorStarting);
         ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
-        setLightsRed();
+        turnLightsOff();
 
     }
 
@@ -397,16 +413,16 @@ public class SharkAttackTeleopInTechnoColor extends LinearOpMode {
         gamepad1_TriggersValue = gamepad1.right_trigger - gamepad1.left_trigger;
         if(Math.abs(gamepad1_RightStickYValue) > 0.2)
         {
-           checkExtensionBoxForDrive();
-          // if(ExtensionBoxRotation.getPosition() < Megalodog.extensionBoxRotatorStarting) {
-          //     ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
-           //}
+            checkExtensionBoxForDrive();
+            // if(ExtensionBoxRotation.getPosition() < Megalodog.extensionBoxRotatorStarting) {
+            //     ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
+            //}
         }
         if(Math.abs(gamepad1_LeftStickYValue) > 0.2 && checkIsExtensionHome())
         {
-          //  if(ExtensionBoxRotation.getPosition() < Megalodog.extensionBoxRotatorStarting) {
-           //     ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
-           // }
+            //  if(ExtensionBoxRotation.getPosition() < Megalodog.extensionBoxRotatorStarting) {
+            //     ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
+            // }
         }
         if (gamepad1_RightStickYValue != 0 || gamepad1_RightStickXValue != 0 || gamepad1_LeftStickYValue != 0 || gamepad1_LeftStickXValue != 0 || gamepad1_TriggersValue != 0) {
             // Set robot's move forward(+) or backwards(-) power
@@ -480,19 +496,16 @@ public class SharkAttackTeleopInTechnoColor extends LinearOpMode {
         LiftLimit = hardwareMap.get(TouchSensor.class, "LiftLimit");
         LiftLimit2 = hardwareMap.get(TouchSensor.class, "LiftLimit2");
         WallFinder = hardwareMap.get(TouchSensor.class, "WallFinder");
-        // LEDLeft and LEDRight
-
-        RedLEDLeft = hardwareMap.get(DigitalChannel.class, "LeftLEDRed");
-        RedLEDLeft.setMode(DigitalChannel.Mode.OUTPUT);
-        RedLEDRight = hardwareMap.get(DigitalChannel.class, "RightLEDRed");
-        RedLEDRight.setMode(DigitalChannel.Mode.OUTPUT);
-        GreenLEDLeft = hardwareMap.get(DigitalChannel.class, "LeftLEDGreen");
-        GreenLEDLeft.setMode(DigitalChannel.Mode.OUTPUT);
-        GreenLEDRight = hardwareMap.get(DigitalChannel.class, "RightLEDGreen");
-        GreenLEDRight.setMode(DigitalChannel.Mode.OUTPUT);
-
         colorSensor = hardwareMap.get(ColorSensor.class,"ColorSensor");
-        distanceSensor = hardwareMap.get(DistanceSensor.class, "ColorSensor");
+        leftLEDRed = hardwareMap.get(DigitalChannel.class, "LeftLEDRed");
+        leftLEDGreen = hardwareMap.get(DigitalChannel.class, "LeftLEDGreen");
+        rightLEDRed = hardwareMap.get(DigitalChannel.class, "RightLEDRed");
+        rightLEDGreen = hardwareMap.get(DigitalChannel.class, "RightLEDGreen");
+
+        leftLEDRed.setMode(DigitalChannel.Mode.OUTPUT);
+        leftLEDGreen.setMode(DigitalChannel.Mode.OUTPUT);
+        rightLEDRed.setMode(DigitalChannel.Mode.OUTPUT);
+        rightLEDGreen.setMode(DigitalChannel.Mode.OUTPUT);
 
         SpecimenGripperServo.setDirection(Servo.Direction.REVERSE);
 
@@ -616,35 +629,72 @@ public class SharkAttackTeleopInTechnoColor extends LinearOpMode {
 
     public void setLightsGreen()
     {
-        RedLEDLeft.setState(false);
-        GreenLEDLeft.setState(true);
+        leftLEDRed.setState(false);
+        leftLEDGreen.setState(true);
 
-        GreenLEDRight.setState(true);
-        RedLEDRight.setState(false);
+        rightLEDRed.setState(false);
+        rightLEDGreen.setState(true);
     }
     public void setLightsRed()
     {
-        RedLEDLeft.setState(true);
-        GreenLEDLeft.setState(false);
+        leftLEDRed.setState(true);
+        leftLEDGreen.setState(false);
 
-        GreenLEDRight.setState(false);
-        RedLEDRight.setState(true);
+        rightLEDRed.setState(true);
+        rightLEDGreen.setState(false);
     }
 
     public void turnLightsOff()
     {
-        RedLEDLeft.setState(true);
-        GreenLEDLeft.setState(true);
+        leftLEDRed.setState(true);
+        leftLEDGreen.setState(true);
 
-        GreenLEDRight.setState(true);
-        RedLEDRight.setState(true);
+        rightLEDRed.setState(true);
+        rightLEDGreen.setState(true);
     }
 
-    public void manageColorSensor()
+    public boolean colorDetection(String side, boolean sampleIn)
     {
+        NormalizedRGBA normalizedColors;
+        int color;
+        float hue;
 
+        // Read color from the sensor.
+        normalizedColors = ((NormalizedColorSensor) colorSensor).getNormalizedColors();
+        // Convert RGB values to Hue, Saturation, and Value.
+        color = normalizedColors.toColor();
+        hue = JavaUtil.colorToHue(color);
+        if (sampleDetected()) {
+            // Sample is in
+            if (!sampleIn) {
+                // Sample wasn't in before new detection
+                if (hue < 60) {
+                    telemetry.addData("Color", "Red");
+                    setLightsGreen();
+                } else if (hue <= 90) {
+                    telemetry.addData("Color", "Yellow");
+                    setLightsGreen();
+                } else if (hue >= 210 && hue <= 250) {
+                    telemetry.addData("Color", "Blue");
+                    setLightsGreen();
+                }
+                sampleIn = true;
+            }
+        } else {
+            // Sample is not in
+            telemetry.addData("Color", "None");
+            if (sampleIn) {
+                // Sample was in before new detection
+                turnLightsOff();
+                sampleIn = false;
+            }
+        }
+        return sampleIn;  // test
+    }
 
-
+    public boolean sampleDetected()
+    {
+        return ((OpticalDistanceSensor) colorSensor).getLightDetected() > 0.1;
     }
 
 }

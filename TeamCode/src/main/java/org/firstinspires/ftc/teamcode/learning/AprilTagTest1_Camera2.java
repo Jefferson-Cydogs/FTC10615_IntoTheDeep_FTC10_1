@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.learning;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -19,6 +20,7 @@ import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+@Disabled
 @TeleOp(name = "TestAprilTag Camera 2 (Blocks to Java)")
 public class AprilTagTest1_Camera2 extends LinearOpMode {
 

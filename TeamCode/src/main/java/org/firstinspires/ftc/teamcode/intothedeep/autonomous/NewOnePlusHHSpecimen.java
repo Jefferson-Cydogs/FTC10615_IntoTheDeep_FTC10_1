@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
 
 // The 'extends LinearOpMode' is needed so this code can run the build in op mode code from FIRST.
 //    @Autonomous puts this code in the autonomous category on driver station
-@Autonomous(name="New One Specimen Plus HH / Park", group="Autonomous")
+@Autonomous(name="Right Specimen if HH has an extra", group="Autonomous", preselectTeleOp = "Shark Attack!")
 public class NewOnePlusHHSpecimen extends LinearOpMode {
 
     /* declare variables
@@ -70,7 +70,7 @@ public class NewOnePlusHHSpecimen extends LinearOpMode {
             myBot.RaiseLift(Megalodog.liftHome, 200);
             myBot.StrafeLeft(1300, 0.7, 300);
             myBot.RotateRight(180, .7, 300);
-            myBot.MoveStraight(-80, .7, 2000);
+            myBot.MoveStraight(-220, .7, 2000);
 
         }
     }
