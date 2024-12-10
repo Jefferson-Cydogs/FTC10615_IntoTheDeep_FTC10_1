@@ -689,7 +689,7 @@ public class SharkAttackTeleopInTechnoColor extends LinearOpMode {
                 sampleIn = false;
             }
         }
-        return sampleIn;
+        return sampleIn;  // test
     }
 
     public boolean sampleDetected()
