@@ -91,10 +91,10 @@ public class SharkAttackTeleopInTechnoColor extends LinearOpMode {
         initializeWheels();
         initializeDevices();
         int gain;
-        boolean SampleInsideIntake;
         NormalizedRGBA normalizedColors;
         int color;
         float hue;
+        boolean SampleInsideIntake;
         //String detectedColor;
 
         gain = 2;
@@ -109,6 +109,7 @@ public class SharkAttackTeleopInTechnoColor extends LinearOpMode {
         if (opModeIsActive()) {
             // RUN BLOCKS:
             initializePositions();
+            ((NormalizedColorSensor) colorSensor).setGain(gain);
             while (opModeIsActive()) {
             //    telemetry.clear();
                 // LOOP BLOCKS:
@@ -652,10 +653,44 @@ public class SharkAttackTeleopInTechnoColor extends LinearOpMode {
         rightLEDGreen.setState(true);
     }
 
-    /*public String colorDetection()
+    public boolean colorDetection(String side, boolean sampleIn)
     {
+        NormalizedRGBA normalizedColors;
+        int color;
+        float hue;
 
-    }*/
+        // Read color from the sensor.
+        normalizedColors = ((NormalizedColorSensor) colorSensor).getNormalizedColors();
+        // Convert RGB values to Hue, Saturation, and Value.
+        color = normalizedColors.toColor();
+        hue = JavaUtil.colorToHue(color);
+        if (sampleDetected()) {
+            // Sample is in
+            if (!sampleIn) {
+                // Sample wasn't in before new detection
+                if (hue < 60) {
+                    telemetry.addData("Color", "Red");
+                    setLightsGreen();
+                } else if (hue <= 90) {
+                    telemetry.addData("Color", "Yellow");
+                    setLightsGreen();
+                } else if (hue >= 210 && hue <= 250) {
+                    telemetry.addData("Color", "Blue");
+                    setLightsGreen();
+                }
+                sampleIn = true;
+            }
+        } else {
+            // Sample is not in
+            telemetry.addData("Color", "None");
+            if (sampleIn) {
+                // Sample was in before new detection
+                turnLightsOff();
+                sampleIn = false;
+            }
+        }
+        return sampleIn;
+    }
 
     public boolean sampleDetected()
     {
