@@ -17,6 +17,8 @@ import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.teamcode.core.EventTracker;
 import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
 
+import java.util.Objects;
+
 // switch fast and slow drive
 @TeleOp(name="Shark Attack in TechnoColor!", group="Teleop")
 public class SharkAttackTeleopInTechnoColor extends LinearOpMode {
@@ -91,15 +93,15 @@ public class SharkAttackTeleopInTechnoColor extends LinearOpMode {
         initializeWheels();
         initializeDevices();
         int gain;
-        NormalizedRGBA normalizedColors;
-        int color;
-        float hue;
+        //NormalizedRGBA normalizedColors;
+        //int color;
+        //float hue;
         boolean SampleInsideIntake;
-        //String detectedColor;
+        String AllianceColor;
 
         gain = 2;
         SampleInsideIntake = false;
-        //detectedColor="None";
+        AllianceColor = "Red";
 
         currentTimer = new ElapsedTime();
 
@@ -120,7 +122,7 @@ public class SharkAttackTeleopInTechnoColor extends LinearOpMode {
                 manageManipulatorControls();
 
                 // get color settings
-                // Read color from the sensor.
+                /* // Read color from the sensor.
                 normalizedColors = ((NormalizedColorSensor) colorSensor).getNormalizedColors();
                 // Convert RGB values to Hue, Saturation, and Value.
                 color = normalizedColors.toColor();
@@ -150,13 +152,14 @@ public class SharkAttackTeleopInTechnoColor extends LinearOpMode {
                         turnLightsOff();
                         SampleInsideIntake = false;
                     }
-                }
-                telemetry.update();
-
-                /*if(eventTracker.doEvent("Telemetry",currentTimer.seconds(),0.3))
-                {
-                    telemetry.update();
                 }*/
+                SampleInsideIntake = colorDetection(AllianceColor, SampleInsideIntake);
+                //telemetry.update();
+
+              //  if(eventTracker.doEvent("Telemetry",currentTimer.seconds(),0.3))
+              //  {
+              //      telemetry.update();
+               // }
             }
         }
     }
@@ -665,31 +668,40 @@ public class SharkAttackTeleopInTechnoColor extends LinearOpMode {
         color = normalizedColors.toColor();
         hue = JavaUtil.colorToHue(color);
         if (sampleDetected()) {
-            // Sample is in
+            // Sample inside Intake
             if (!sampleIn) {
-                // Sample wasn't in before new detection
+                // Only runs when Sample wasn't in before new detection
                 if (hue < 60) {
-                    telemetry.addData("Color", "Red");
-                    setLightsGreen();
+                  //  telemetry.addData("Color", "Red");
+                    if (side.equals("Red")) {
+                        setLightsGreen();
+                    } else {
+                        setLightsRed();
+                    }
                 } else if (hue <= 90) {
-                    telemetry.addData("Color", "Yellow");
+                 //   telemetry.addData("Color", "Yellow");
                     setLightsGreen();
                 } else if (hue >= 210 && hue <= 250) {
-                    telemetry.addData("Color", "Blue");
-                    setLightsGreen();
+                  //  telemetry.addData("Color", "Blue");
+                    if (side.equals("Blue")) {
+                        setLightsGreen();
+                    } else {
+                        setLightsRed();
+                    }
                 }
                 sampleIn = true;
             }
         } else {
-            // Sample is not in
-            telemetry.addData("Color", "None");
+            // Sample not inside Intake
+         //   telemetry.addData("Color", "None");
             if (sampleIn) {
-                // Sample was in before new detection
+                // Only runs when Sample was in before new detection
                 turnLightsOff();
                 sampleIn = false;
             }
         }
-        return sampleIn;  // test
+
+        return sampleIn;
     }
 
     public boolean sampleDetected()
