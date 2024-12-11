@@ -17,6 +17,8 @@ import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.teamcode.core.EventTracker;
 import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
 
+import java.util.Objects;
+
 // switch fast and slow drive
 @TeleOp(name="Shark Attack in TechnoColor!", group="Teleop")
 public class SharkAttackTeleopInTechnoColor extends LinearOpMode {
@@ -671,7 +673,7 @@ public class SharkAttackTeleopInTechnoColor extends LinearOpMode {
                 // Only runs when Sample wasn't in before new detection
                 if (hue < 60) {
                     telemetry.addData("Color", "Red");
-                    if (side == "Red") {
+                    if (side.equals("Red")) {
                         setLightsGreen();
                     } else {
                         setLightsRed();
@@ -681,7 +683,7 @@ public class SharkAttackTeleopInTechnoColor extends LinearOpMode {
                     setLightsGreen();
                 } else if (hue >= 210 && hue <= 250) {
                     telemetry.addData("Color", "Blue");
-                    if (side == "Blue") {
+                    if (side.equals("Blue")) {
                         setLightsGreen();
                     } else {
                         setLightsRed();
