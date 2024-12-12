@@ -35,7 +35,10 @@ public class NewOneSpecimenPushThree extends LinearOpMode {
             myBot.RaiseLift (Megalodog.liftUpperSpecimenBar,200);  // was 900
             myBot.MoveStraight(-684,.20,200); // was 200
             //myBot.MoveStraight(-80,.10,500);
-            myBot.MoveUntilButton(.4,-80);
+            if(!myBot.MoveUntilButton(.4,-80))
+            {
+                myBot.MoveStraight(50,.3,100);
+            }
             sleep(200);
             myBot.HookAndLetGo(Megalodog.liftPullSpecimenFromUpperBar, 700, 500);
 
@@ -61,7 +64,7 @@ public class NewOneSpecimenPushThree extends LinearOpMode {
 
             // push to wall and grab next
             myBot.MoveStraight(-1040, .4, 200);
-            myBot.MoveStraight(-90, .12, 200);  //was 400
+            myBot.MoveStraight(-100, .12, 200);  //was 400
             myBot.MoveStraight(30, .12, 200);
             myBot.GrabSpecimenAndLift(500);  // cannot lower wait
             myBot.LevelGripper(0);
@@ -69,21 +72,24 @@ public class NewOneSpecimenPushThree extends LinearOpMode {
             // Go place HH specimen
             myBot.MoveStraight(250, .25, 200);  // 734 to bar
          //   myBot.RotateLeft(5, .4, 200);
-            myBot.StrafeLeft(1000, .4, 200);  // 840 to center
+            myBot.StrafeLeft(1100, .4, 200);  // 840 to center
             myBot.RaiseLift(Megalodog.liftUpperSpecimenBar,100);
             myBot.RotateLeft(176,.45, 200);
             myBot.MoveStraight(-300,.18,200);  // was -705
-            myBot.MoveUntilButton(.4,-90);
+            if(!myBot.MoveUntilButton(.4,-80))
+            {
+                myBot.MoveStraight(50,.3,100);
+            }
             myBot.HookAndLetGo(Megalodog.liftPullSpecimenFromUpperBar, 1050, 200);
 
 
             // Go Park
-            myBot.MoveStraight(420,.4 ,100);
+            myBot.MoveStraight(370,.4 ,100);
             myBot.DeployExtensionServo(200);
             myBot.RotateRight(3,.4, 100);
             myBot.PutGripperAway();
             myBot.RaiseLift(Megalodog.liftHome, 200);
-            myBot.StrafeLeft(1300, 0.7, 100);
+            myBot.StrafeLeft(1220, 0.7, 100);
             myBot.RotateRight(180, .7, 100);
             myBot.MoveStraight(-80, .7, 2000);
 
