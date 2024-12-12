@@ -11,7 +11,8 @@ import org.firstinspires.ftc.teamcode.chassis.MegalodogChassis;
 
 // The 'extends LinearOpMode' is needed so this code can run the build in op mode code from FIRST.
 //    @Autonomous puts this code in the autonomous category on driver station
-@Disabled@Autonomous
+@Disabled
+@Autonomous
 public class BlankAutonomous extends LinearOpMode {
 
     /* declare variables

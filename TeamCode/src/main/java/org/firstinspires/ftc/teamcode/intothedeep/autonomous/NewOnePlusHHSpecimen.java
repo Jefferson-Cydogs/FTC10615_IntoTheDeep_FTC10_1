@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
 
 // The 'extends LinearOpMode' is needed so this code can run the build in op mode code from FIRST.
 //    @Autonomous puts this code in the autonomous category on driver station
-@Autonomous(name="Right Specimen if HH has an extra", group="Autonomous", preselectTeleOp = "Shark Attack!")
+@Autonomous(name="Red Right Specimen if HH has an extra", group="Autonomous", preselectTeleOp = "MEG Attack! Red")
 public class NewOnePlusHHSpecimen extends LinearOpMode {
 
     /* declare variables
