@@ -311,8 +311,8 @@ public class MegAttackTeleop2 extends LinearOpMode {
         }
         if(gamepad2.ps)
         {
-            //hangRobot();
-            ExtensionServo.setPosition(.5);
+            ExtensionServo.setPosition(Megalodog.extensionServoFloor+0.005);
+            ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting-0.005);
         }
         if(-gamepad2.right_stick_y > 0.2)
         {

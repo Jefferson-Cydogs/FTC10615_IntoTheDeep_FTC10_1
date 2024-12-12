@@ -32,8 +32,8 @@ public class NewOneSpecimenPushThree extends LinearOpMode {
             myBot.InitializePositions(false, true);
 
             // Go hang first specimen
-            myBot.RaiseLift (Megalodog.liftUpperSpecimenBar,900);
-            myBot.MoveStraight(-684,.20,500);
+            myBot.RaiseLift (Megalodog.liftUpperSpecimenBar,200);  // was 900
+            myBot.MoveStraight(-684,.20,200); // was 200
             //myBot.MoveStraight(-80,.10,500);
             myBot.MoveUntilButton(.4,-80);
             sleep(200);
@@ -61,7 +61,7 @@ public class NewOneSpecimenPushThree extends LinearOpMode {
 
             // push to wall and grab next
             myBot.MoveStraight(-1040, .4, 200);
-            myBot.MoveStraight(-90, .12, 400);
+            myBot.MoveStraight(-90, .12, 200);  //was 400
             myBot.MoveStraight(30, .12, 200);
             myBot.GrabSpecimenAndLift(500);  // cannot lower wait
             myBot.LevelGripper(0);
@@ -69,7 +69,7 @@ public class NewOneSpecimenPushThree extends LinearOpMode {
             // Go place HH specimen
             myBot.MoveStraight(250, .25, 200);  // 734 to bar
          //   myBot.RotateLeft(5, .4, 200);
-            myBot.StrafeLeft(960, .4, 200);  // 840 to center
+            myBot.StrafeLeft(1000, .4, 200);  // 840 to center
             myBot.RaiseLift(Megalodog.liftUpperSpecimenBar,100);
             myBot.RotateLeft(176,.45, 200);
             myBot.MoveStraight(-300,.18,200);  // was -705

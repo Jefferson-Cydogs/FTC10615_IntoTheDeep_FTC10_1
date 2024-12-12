@@ -132,10 +132,6 @@ public class Config_ExtensionRotator extends LinearOpMode {
         {
             resetLift();
         }
-        if(gamepad1.dpad_up)
-        {
-            allowDriving=true;
-        }
         if(gamepad1.triangle) //  hook specimen
         {
             Lift.setTargetPosition(Megalodog.liftPullSpecimenFromUpperBar);
