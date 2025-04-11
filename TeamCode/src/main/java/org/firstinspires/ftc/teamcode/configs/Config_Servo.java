@@ -25,7 +25,7 @@ public class Config_Servo extends LinearOpMode {
     private Servo servo3;
     private Servo servo4;
 
-    //Varaible to keep track of the servo
+    //Variable to keep track of the servo
     private Servo selectedServo = null;
     private String selectedServoName = "None";
 
@@ -62,7 +62,7 @@ public class Config_Servo extends LinearOpMode {
         //Wait for driver presses play
 
 
-        //Display selection Instructions during Intialzation
+        //Display selection Instructions during Intialization
         telemetry.addLine("Select Servo to Test using PlayStation Controller Buttons.")
                 .addData("\nCross(X)", "Extension")
                 .addData("\nCircle(O)", "Delivery Box")

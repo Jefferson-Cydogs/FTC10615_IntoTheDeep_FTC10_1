@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -16,31 +17,32 @@ import org.firstinspires.ftc.teamcode.core.EventTracker;
 import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
 
 // switch fast and slow drive
-@TeleOp(name="Shark Attack!", group="Teleop")
-public class SharkAttackCrowdEdition extends LinearOpMode {
+@TeleOp(name="MEG Attack!", group="Teleop")
+public class MegAttackTeleop3 extends LinearOpMode {
 
     private DcMotor BackLeftWheel;
     private DcMotor FrontLeftWheel;
     private DcMotor BackRightWheel;
     private DcMotor FrontRightWheel;
-    // private DcMotor ExtensionSlider;
+    private DcMotor AscendMotor;
+    private DcMotor ExtensionSlider;
     private int extensionSliderPosition;
     private DcMotor Lift;
-    //private TouchSensor ExtensionLimit;
+    private TouchSensor ExtensionLimit;
     private TouchSensor LiftLimit;
     private TouchSensor LiftLimit2;
-    //private TouchSensor WallFinder;
+    private TouchSensor WallFinder;
     private Servo ExtensionServo;
-    //private Servo DeliveryBoxServo;
-    //private Servo ExtensionBoxRotation;
+    private Servo DeliveryBoxServo;
+    private Servo ExtensionBoxRotation;
     private Servo GripperRotatorServo;
-    //private CRServo IntakeBoxServo;
+    private CRServo IntakeBoxServo;
     public Servo SpecimenGripperServo;
     private double extensionServoPosition;
-    /*private DigitalChannel RedLEDLeft;
+    private DigitalChannel RedLEDLeft;
     private DigitalChannel RedLEDRight;
     private DigitalChannel GreenLEDLeft;
-    private DigitalChannel GreenLEDRight;*/
+    private DigitalChannel GreenLEDRight;
 
     private ColorSensor colorSensor;
     private DistanceSensor distanceSensor;
@@ -56,17 +58,19 @@ public class SharkAttackCrowdEdition extends LinearOpMode {
     private double Rotate;
     private double FastStraight;
     private double FastStrafe;
-    private double highSpeedDrive = 0.5;
-    private double lowSpeedDrive = 0.2;
+    private double highSpeedDrive = 0.8;
+    private double lowSpeedDrive = 0.3;
     private double rotateSpeedDrive = 0.7;
     private int liftGoToPosition = 0;
-    private double currentIntakePower = 0.3;
+    private double currentIntakePower = Megalodog.continuousIntakePower;
     private boolean triggerSpecimenGripperOpen = false;
     private boolean allowDriving = true;
 
     private double currentExtensionBoxRotationPosition = Megalodog.extensionBoxRotatorStarting;
-    private double extensionBoxRotationSpeed = 0.035;
-
+    private double currentExtensionPosition = Megalodog.extensionServoSafetyPosition;
+    private double extensionBoxRotationSpeed = 0.04;
+    private double extensionBoxSpeed = 0.04;
+    double lift_max_velocity = (312 / 60) * 537.7;
     double extensionBoxJoystick;
 
     private ElapsedTime currentTimer;
@@ -102,9 +106,8 @@ public class SharkAttackCrowdEdition extends LinearOpMode {
             // RUN BLOCKS:
             initializePositions();
             while (opModeIsActive()) {
-                //    telemetry.clear();
+            //    telemetry.clear();
                 // LOOP BLOCKS:
-
                 if(allowDriving) {
                     driveChassis();
                 }
@@ -114,12 +117,12 @@ public class SharkAttackCrowdEdition extends LinearOpMode {
                 // get color settings
 
 
-                if(eventTracker.doEvent("Telemetry",currentTimer.seconds(),0.3))
+                if(eventTracker.doEvent("Telemetry",currentTimer.seconds(),0.5))
                 {
 
-                    /*red = colorSensor.red();
-                    // green = colorSensor.green();
-                    // blue = colorSensor.blue();
+                    red = colorSensor.red();
+                    green = colorSensor.green();
+                    blue = colorSensor.blue();
                     distance = distanceSensor.getDistance(DistanceUnit.MM);
                     if(distance < 10)
                     {
@@ -132,7 +135,7 @@ public class SharkAttackCrowdEdition extends LinearOpMode {
                 //    telemetry.addData("Green:", green);
                 //    telemetry.addData("Blue:", blue);
                //     telemetry.addData("Distance(mm):", distance);
-                    telemetry.update();*/
+                    telemetry.update();
                 }
             }
         }
@@ -140,25 +143,25 @@ public class SharkAttackCrowdEdition extends LinearOpMode {
 
     private void manageDriverControls()
     {
-       // if(gamepad1.square)
+        if(gamepad1.square)
         {
             resetExtensionSlider(1000);
         }
-       // if(gamepad1.circle)
+        if(gamepad1.circle)
         {
             resetLift();
         }
-        //if(gamepad1.dpad_up)
+        if(gamepad1.dpad_up)
         {
             allowDriving=true;
         }
-        //if(gamepad1.triangle) //  hook specimen
+        if(gamepad1.triangle) //  hook specimen
         {
             Lift.setTargetPosition(Megalodog.liftPullSpecimenFromUpperBar);
             //schedule an open of specimen gripper
             triggerSpecimenGripperOpen = true;
         }
-      //  if(gamepad1.cross)
+        if(gamepad1.cross)
         {
             if(GripperRotatorServo.getPosition() > Megalodog.gripperRotatorDeployed - 0.1) {
                 SpecimenGripperServo.setPosition(Megalodog.specimenServoClosed);
@@ -168,55 +171,91 @@ public class SharkAttackCrowdEdition extends LinearOpMode {
                 GripperRotatorServo.setPosition(Megalodog.gripperRotatorDeployed);
             }
         }
+        if(gamepad1.dpad_up)
+        {
+            if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.10))
+            {
+                if (extensionSliderPosition < Megalodog.extensionSliderMax-99) {
+                    ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
+                    extensionSliderPosition += 100;
+                    ExtensionSlider.setTargetPosition(extensionSliderPosition);
+                }
+            }
+        }
+        if(gamepad1.dpad_down)
+        {
+            if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.10)) {
+                if (extensionSliderPosition > 100) {
+                    ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
+                    ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
+                    extensionSliderPosition -= 100;
+                    if(extensionSliderPosition < 150)
+                    {
+                        //extensionSliderPosition = 20;
+                        resetExtensionSlider(600);
+                    }
+                    else {
+                        ExtensionSlider.setTargetPosition(extensionSliderPosition);
+                    }
+                }
+            }
+        }
+        while(gamepad1.ps)
+        {
+            Lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+            ((DcMotorEx)Lift).setVelocity(0);
+            ExtensionServo.setPosition(.3);
+            AscendMotor.setPower(-0.7);
+        }
+        Lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        AscendMotor.setPower(0);
+        ((DcMotorEx)Lift).setVelocity(0.85*lift_max_velocity);
 
     }
     private void manageManipulatorControls()
     {
-        /*if(gamepad2.circle)  // dump extension servo
+        if(gamepad2.circle)  // dump extension servo
         {
             if(checkIsLiftDown()) {
                 ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorDumping);
                 ExtensionServo.setPosition(Megalodog.extensionServoDump);
             }
-        }*/
-       /* if(gamepad2.square) // extension to floor
+        }
+        if(gamepad2.square) // extension to floor
         {
-            if(checkIsIntakeUp())
-            {
-                ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
-            }
-            ExtensionServo.setPosition(Megalodog.extensionServoFloor);*/
-        //}
-       // if(triggerSpecimenGripperOpen && Lift.getCurrentPosition() < Megalodog.liftPullSpecimenFromUpperBar+30)
-       // {
+            ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
+            ExtensionServo.setPosition(Megalodog.extensionServoFloor);
+        }
+        if(triggerSpecimenGripperOpen && Lift.getCurrentPosition() < Megalodog.liftPullSpecimenFromUpperBar+30)
+        {
             SpecimenGripperServo.setPosition(Megalodog.specimenServoOpen);
             triggerSpecimenGripperOpen = false;
             allowDriving = true;
             reFloatWheels();
-        //}
-        //if (gamepad2.triangle) {  //Dump Delivery Box
-           // checkExtensionServoSafety();
-          //  DeliveryBoxServo.setPosition(Megalodog.deliveryServoDump);
-       //} else if (gamepad2.cross) {
-         //   checkExtensionServoSafety();
-           // DeliveryBoxServo.setPosition(Megalodog.deliveryServoHome);
-        //}
+        }
+        if (gamepad2.triangle) {  //Dump Delivery Box
+            checkExtensionServoSafety();
+            DeliveryBoxServo.setPosition(Megalodog.deliveryServoDump);
+        } else if (gamepad2.cross) {
+            checkExtensionServoSafety();
+            DeliveryBoxServo.setPosition(Megalodog.deliveryServoHome);
+        }
 
-       // if (gamepad2.right_trigger>0.4) {   // INTAKE
-          //  if(checkIsIntakeUp()) { currentIntakePower = Megalodog.continuousIntakeDumpPower;}
-          //  else {currentIntakePower = 0.3;}
+        if (gamepad2.right_trigger>0.4) {   // INTAKE
+            if(checkIsIntakeUp()) { currentIntakePower = Megalodog.continuousIntakeDumpPower;}
+            else {currentIntakePower = Megalodog.continuousIntakePower;}
 
-         //   IntakeBoxServo.setPower(currentIntakePower);
+            IntakeBoxServo.setPower(currentIntakePower);
+        }
+        else if(gamepad2.left_trigger>0.4) {
+            if(checkIsIntakeUp()) { currentIntakePower = Megalodog.continuousIntakeDumpPower;}
+            else {currentIntakePower = Megalodog.continuousIntakePower;}
 
-      // else if(gamepad2.left_trigger>0.4) {
-         //   if(checkIsIntakeUp()) { currentIntakePower = Megalodog.continuousIntakeDumpPower;}
-        //    else {currentIntakePower = 0.3;}
-
-     //       IntakeBoxServo.setPower(-currentIntakePower);
-
-     //   else {
-       //     IntakeBoxServo.setPower(0);
-
+            IntakeBoxServo.setPower(-currentIntakePower);
+        }
+        else {
+            IntakeBoxServo.setPower(0);
+        }
 
         if(gamepad2.right_bumper) {  // Specimen Gripper CLOSE
             if (eventTracker.doEvent("Close Gripper", currentTimer.seconds(), 0.10))
@@ -229,16 +268,16 @@ public class SharkAttackCrowdEdition extends LinearOpMode {
                 {      SpecimenGripperServo.setPosition(Megalodog.specimenServoOpen);  }
             }
         }
-      //  if(WallFinder.isPressed() && checkIsLiftDown())
-        //{
-            //if (eventTracker.doEvent("Wall Close Gripper", currentTimer.seconds(), 2.0))
-          //  {
-            //    SpecimenGripperServo.setPosition(Megalodog.specimenServoClosed);  }
+        if(WallFinder.isPressed() && checkIsLiftDown())
+        {
+            if (eventTracker.doEvent("Wall Close Gripper", currentTimer.seconds(), 2.0))
+            {
+                SpecimenGripperServo.setPosition(Megalodog.specimenServoClosed);  }
 
-        //}
+        }
 
 
-     /*   if(WallFinder.isPressed() && checkIsLiftUp())
+        if(WallFinder.isPressed() && checkIsLiftUp())
         {
             if (eventTracker.doEvent("Wall Finder Specimen Hang", currentTimer.seconds(), 1.0))
             {
@@ -250,26 +289,35 @@ public class SharkAttackCrowdEdition extends LinearOpMode {
                 triggerSpecimenGripperOpen = true;
 
             }
-        }*/
+        }
 
 
         if (gamepad2.dpad_down) {
-                if(currentTimer.seconds() < 100)
-           // {checkExtensionServoSafety();}
+            AscendMotor.setPower(0);
+            if(currentTimer.seconds() < 100)
+            {checkExtensionServoSafety();}
             deliveryBoxServoPosition = Megalodog.deliveryServoHome;
-           // DeliveryBoxServo.setPosition(deliveryBoxServoPosition);
+            DeliveryBoxServo.setPosition(deliveryBoxServoPosition);
             Lift.setTargetPosition(30);
         } else if (gamepad2.dpad_left) {
-           //checkExtensionServoSafety();
+            AscendMotor.setPower(0);
+            checkExtensionServoSafety();
             Lift.setTargetPosition(Megalodog.liftLowerBasket);
         } else if (gamepad2.dpad_up) {
-            //checkExtensionServoSafety();
+            AscendMotor.setPower(0);
+            checkExtensionServoSafety();
             Lift.setTargetPosition(Megalodog.liftUpperBasket);
         } else if (gamepad2.dpad_right) {
-          //  checkExtensionServoSafety();
+            AscendMotor.setPower(0);
+            checkExtensionServoSafety();
             Lift.setTargetPosition(Megalodog.liftUpperSpecimenBar);
         }
-      /*  if(-gamepad2.right_stick_y > 0.2)
+        if(gamepad2.ps)
+        {
+            //hangRobot();
+            ExtensionServo.setPosition(.5);
+        }
+        if(-gamepad2.right_stick_y > 0.2)
         {
             if(eventTracker.doEvent("Extension Box Rotator",currentTimer.seconds(),0.05)) {
                 currentExtensionBoxRotationPosition += extensionBoxRotationSpeed;
@@ -277,48 +325,32 @@ public class SharkAttackCrowdEdition extends LinearOpMode {
                 ExtensionBoxRotation.setPosition(currentExtensionBoxRotationPosition);
                 telemetry.addData("extension rotate:", currentExtensionBoxRotationPosition);
             }
-        }*/
-        if(gamepad2.ps)
-        {
-            //hangRobot();
-            ExtensionServo.setPosition(.5);
         }
         if(-gamepad2.right_stick_y < -0.2)
         {
             if(eventTracker.doEvent("Extension Box Rotator",currentTimer.seconds(),0.05)) {
                 currentExtensionBoxRotationPosition -= extensionBoxRotationSpeed;
                 currentExtensionBoxRotationPosition = Math.max(0.0, Math.min(currentExtensionBoxRotationPosition, 1.0));
-              //  ExtensionBoxRotation.setPosition(currentExtensionBoxRotationPosition);
+                ExtensionBoxRotation.setPosition(currentExtensionBoxRotationPosition);
                 telemetry.addData("extension rotate:", currentExtensionBoxRotationPosition);
             }
         }
         if(-gamepad2.left_stick_y > 0.2)
         {
-            if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.10))
-            {
-                if (extensionSliderPosition < Megalodog.extensionSliderMax-120) {
-                    ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
-                    extensionSliderPosition += 120;
-              //      ExtensionSlider.setTargetPosition(extensionSliderPosition);
-                }
+            if(eventTracker.doEvent("Extension Box Move",currentTimer.seconds(),0.05)) {
+                currentExtensionPosition += extensionBoxSpeed;
+                currentExtensionPosition = Math.max(Megalodog.extensionServoDump, Math.min(currentExtensionPosition, Megalodog.extensionServoFloor));
+                ExtensionServo.setPosition(currentExtensionPosition);
+                telemetry.addData("extension rotate:", currentExtensionPosition);
             }
         }
         if(-gamepad2.left_stick_y < -0.2)
         {
-            if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.10)) {
-                if (extensionSliderPosition > 120) {
-                    ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
-                //    ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
-                    extensionSliderPosition -= 120;
-                    if(extensionSliderPosition < 150)
-                    {
-                        //extensionSliderPosition = 20;
-                        resetExtensionSlider(600);
-                    }
-                    else {
-                //        ExtensionSlider.setTargetPosition(extensionSliderPosition);
-                    }
-                }
+            if(eventTracker.doEvent("Extension Box Move",currentTimer.seconds(),0.05)) {
+                currentExtensionPosition -= extensionBoxSpeed;
+                currentExtensionPosition = Math.max(Megalodog.extensionServoDump, Math.min(currentExtensionPosition, Megalodog.extensionServoFloor));
+                ExtensionServo.setPosition(currentExtensionPosition);
+                telemetry.addData("extension rotate:", currentExtensionPosition);
             }
         }
 
@@ -373,11 +405,11 @@ public class SharkAttackCrowdEdition extends LinearOpMode {
 
         ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
         deliveryBoxServoPosition = Megalodog.deliveryServoHome;
-        //DeliveryBoxServo.setPosition(Megalodog.deliveryServoHome);
+        DeliveryBoxServo.setPosition(Megalodog.deliveryServoHome);
         SpecimenGripperServo.setPosition(Megalodog.specimenServoStarting);
         GripperRotatorServo.setPosition(Megalodog.gripperRotatorStarting);
-        //ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
-       // setLightsRed();
+        ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
+        setLightsRed();
 
     }
 
@@ -390,12 +422,12 @@ public class SharkAttackCrowdEdition extends LinearOpMode {
         gamepad1_TriggersValue = gamepad1.right_trigger - gamepad1.left_trigger;
         if(Math.abs(gamepad1_RightStickYValue) > 0.2)
         {
-       //   checkExtensionBoxForDrive();
+           checkExtensionBoxForDrive();
           // if(ExtensionBoxRotation.getPosition() < Megalodog.extensionBoxRotatorStarting) {
           //     ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
            //}
         }
-   //     if(Math.abs(gamepad1_LeftStickYValue) > 0.2 && checkIsExtensionHome())
+        if(Math.abs(gamepad1_LeftStickYValue) > 0.2 && checkIsExtensionHome())
         {
           //  if(ExtensionBoxRotation.getPosition() < Megalodog.extensionBoxRotatorStarting) {
            //     ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
@@ -462,27 +494,27 @@ public class SharkAttackCrowdEdition extends LinearOpMode {
     private void initializeDevices()
     {
         ExtensionServo = hardwareMap.get(Servo.class, "Extension");
-        //ExtensionBoxRotation = hardwareMap.get(Servo.class, "ExtensionBoxRotator");
-       // DeliveryBoxServo = hardwareMap.get(Servo.class, "DeliveryBox");
-       // IntakeBoxServo = hardwareMap.get(CRServo.class, "IntakeBox");
+        ExtensionBoxRotation = hardwareMap.get(Servo.class, "ExtensionBoxRotator");
+        DeliveryBoxServo = hardwareMap.get(Servo.class, "DeliveryBox");
+        IntakeBoxServo = hardwareMap.get(CRServo.class, "IntakeBox");
         SpecimenGripperServo = hardwareMap.get(Servo.class,"SpecimenGripper");
         GripperRotatorServo = hardwareMap.get(Servo.class,"GripperRotator");
-       // ExtensionSlider = hardwareMap.get(DcMotor.class, "IntakeExtension");
+        ExtensionSlider = hardwareMap.get(DcMotor.class, "IntakeExtension");
         Lift = hardwareMap.get(DcMotor.class, "Lift");
-        //ExtensionLimit = hardwareMap.get(TouchSensor.class, "ExtensionLimit");
+        ExtensionLimit = hardwareMap.get(TouchSensor.class, "ExtensionLimit");
         LiftLimit = hardwareMap.get(TouchSensor.class, "LiftLimit");
         LiftLimit2 = hardwareMap.get(TouchSensor.class, "LiftLimit2");
-      //  WallFinder = hardwareMap.get(TouchSensor.class, "WallFinder");
+        WallFinder = hardwareMap.get(TouchSensor.class, "WallFinder");
         // LEDLeft and LEDRight
 
-       // RedLEDLeft = hardwareMap.get(DigitalChannel.class, "LeftLEDRed");
-     //   RedLEDLeft.setMode(DigitalChannel.Mode.OUTPUT);
-     //   RedLEDRight = hardwareMap.get(DigitalChannel.class, "RightLEDRed");
-    //    RedLEDRight.setMode(DigitalChannel.Mode.OUTPUT);
-     //   GreenLEDLeft = hardwareMap.get(DigitalChannel.class, "LeftLEDGreen");
-     //   GreenLEDLeft.setMode(DigitalChannel.Mode.OUTPUT);
-    //    GreenLEDRight = hardwareMap.get(DigitalChannel.class, "RightLEDGreen");
-    //    GreenLEDRight.setMode(DigitalChannel.Mode.OUTPUT);
+        RedLEDLeft = hardwareMap.get(DigitalChannel.class, "LeftLEDRed");
+        RedLEDLeft.setMode(DigitalChannel.Mode.OUTPUT);
+        RedLEDRight = hardwareMap.get(DigitalChannel.class, "RightLEDRed");
+        RedLEDRight.setMode(DigitalChannel.Mode.OUTPUT);
+        GreenLEDLeft = hardwareMap.get(DigitalChannel.class, "LeftLEDGreen");
+        GreenLEDLeft.setMode(DigitalChannel.Mode.OUTPUT);
+        GreenLEDRight = hardwareMap.get(DigitalChannel.class, "RightLEDGreen");
+        GreenLEDRight.setMode(DigitalChannel.Mode.OUTPUT);
 
         colorSensor = hardwareMap.get(ColorSensor.class,"ColorSensor");
         distanceSensor = hardwareMap.get(DistanceSensor.class, "ColorSensor");
@@ -490,36 +522,42 @@ public class SharkAttackCrowdEdition extends LinearOpMode {
         SpecimenGripperServo.setDirection(Servo.Direction.REVERSE);
 
         GripperRotatorServo.setDirection(Servo.Direction.REVERSE);
+
+        // Ascend Motor
+        AscendMotor = hardwareMap.get(DcMotor.class, "AscendMotor");
+        AscendMotor.setDirection(DcMotor.Direction.FORWARD);  // forward is UP, to hang use negative power
+        AscendMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+        AscendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
         resetExtensionSlider(3000);
 
         resetLift();
     }
 
-    private void resetExtensionSlider(long safetyDuration) {
+    private void resetExtensionSlider(long safetyDuration)
+    {
 
-        //   ExtensionSlider.setDirection(DcMotor.Direction.FORWARD);
-        //    ExtensionSlider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //     ExtensionSlider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        ExtensionSlider.setDirection(DcMotor.Direction.FORWARD);
+        ExtensionSlider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        ExtensionSlider.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         long startTime = System.currentTimeMillis(); // Record the start time
         long maxDuration = safetyDuration; // Maximum duration in milliseconds (3 seconds)
 
-        //    while(!ExtensionLimit.isPressed()) {
-        //        ExtensionSlider.setPower(-0.8);
-        //   if (System.currentTimeMillis() - startTime > maxDuration) { break;}
-    }
-    {
-       // ExtensionSlider.setPower(0);
+        while(!ExtensionLimit.isPressed()) {
+            ExtensionSlider.setPower(-0.8);
+            if (System.currentTimeMillis() - startTime > maxDuration) { break;}
+        }
+        ExtensionSlider.setPower(0);
 
-       // ExtensionSlider.setDirection(DcMotor.Direction.FORWARD);
-       // ExtensionSlider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-      //  ExtensionSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        //ExtensionSlider.setTargetPosition(0);
-        //ExtensionSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-    //   ExtensionSlider.setPower(0.8);
-       // extensionSliderPosition = 0;
+        ExtensionSlider.setDirection(DcMotor.Direction.FORWARD);
+        ExtensionSlider.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        ExtensionSlider.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        ExtensionSlider.setTargetPosition(0);
+        ExtensionSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        ExtensionSlider.setPower(0.8);
+        extensionSliderPosition = 0;
     }
-
 
     private void resetLift()
     {
@@ -542,17 +580,18 @@ public class SharkAttackCrowdEdition extends LinearOpMode {
         Lift.setTargetPosition(0);
         Lift.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        // LAJIRAFA_MAX_VELOCITY = (312 / 60) * 537.7;
+
         // 312 is
         // 537.7 is
         //double liftMaxVelocity = (312 / 60) * 537.7;
+        ((DcMotorEx)Lift).setVelocity(.8*lift_max_velocity);
 
-        Lift.setPower(.8);
     }
 
-    /*private void checkExtensionServoSafety()
+    private void checkExtensionServoSafety()
     {
-        if(ExtensionServo.getPosition() > Megalodog.extensionServoSafetyPosition+0.04)
+        if(ExtensionServo.getPosition() > Megalodog.extensionServoSafetyPosition+0.05
+        || ExtensionServo.getPosition() < Megalodog.extensionServoSafetyPosition-0.05)
         {
             ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
         }
@@ -569,7 +608,7 @@ public class SharkAttackCrowdEdition extends LinearOpMode {
 
     private boolean checkIsIntakeUp()
     {
-        return (ExtensionServo.getPosition() > Megalodog.extensionServoDump-0.2);
+        return (ExtensionServo.getPosition() < Megalodog.extensionServoDump+0.2);
     }
     private boolean checkIsExtensionHome()
     {
@@ -577,11 +616,11 @@ public class SharkAttackCrowdEdition extends LinearOpMode {
     }
     private void checkExtensionBoxForDrive()
     {
-        if(ExtensionServo.getPosition() < Megalodog.extensionServoSafetyPosition - 0.04)
+        if(ExtensionServo.getPosition() > Megalodog.extensionServoSafetyPosition + 0.04)
         {
             ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
         }
-    }*/
+    }
 
     private boolean checkRotatorGripperIsDeployed()
     {
@@ -600,14 +639,15 @@ public class SharkAttackCrowdEdition extends LinearOpMode {
         BackRightWheel.setPower(0);
     }
 
-    private void reFloatWheels() {
+    private void reFloatWheels()
+    {
         BackLeftWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         BackRightWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         FrontLeftWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         FrontRightWheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-    }}
+    }
 
-  /*  public void setLightsGreen()
+    public void setLightsGreen()
     {
         RedLEDLeft.setState(false);
         GreenLEDLeft.setState(true);
@@ -615,7 +655,7 @@ public class SharkAttackCrowdEdition extends LinearOpMode {
         GreenLEDRight.setState(true);
         RedLEDRight.setState(false);
     }
-  /*  public void setLightsRed()
+    public void setLightsRed()
     {
         RedLEDLeft.setState(true);
         GreenLEDLeft.setState(false);
@@ -624,14 +664,4 @@ public class SharkAttackCrowdEdition extends LinearOpMode {
         RedLEDRight.setState(true);
     }
 
-  /*  public void turnLightsOff()
-    {
-        RedLEDLeft.setState(true);
-        GreenLEDLeft.setState(true);
-
-        GreenLEDRight.setState(true);
-        RedLEDRight.setState(true);
-    }
-
-
-   */
+}
