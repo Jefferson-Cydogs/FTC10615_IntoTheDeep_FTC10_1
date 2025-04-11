@@ -8,16 +8,20 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.NormalizedColorSensor;
+import com.qualcomm.robotcore.hardware.NormalizedRGBA;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.JavaUtil;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.core.EventTracker;
 import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
 
 // switch fast and slow drive
-@TeleOp(name="MEG Attack! The Return", group="Teleop")
+@TeleOp(name="MEG Attack! Red", group="Teleop")
 public class MegAttackTeleop2 extends LinearOpMode {
 
     private DcMotor BackLeftWheel;
@@ -39,11 +43,10 @@ public class MegAttackTeleop2 extends LinearOpMode {
     private CRServo IntakeBoxServo;
     public Servo SpecimenGripperServo;
     private double extensionServoPosition;
-    private DigitalChannel RedLEDLeft;
-    private DigitalChannel RedLEDRight;
-    private DigitalChannel GreenLEDLeft;
-    private DigitalChannel GreenLEDRight;
-
+    private DigitalChannel leftLEDRed;
+    private DigitalChannel leftLEDGreen;
+    private DigitalChannel rightLEDRed;
+    private DigitalChannel rightLEDGreen;
     private ColorSensor colorSensor;
     private DistanceSensor distanceSensor;
     private double deliveryBoxServoPosition;
@@ -80,6 +83,8 @@ public class MegAttackTeleop2 extends LinearOpMode {
     private int blue;
     private double distance;
 
+    public String AllianceColor = "Red";
+
     /**
      * This function is executed when this Op Mode is selected from the Driver Station.
      */
@@ -95,6 +100,13 @@ public class MegAttackTeleop2 extends LinearOpMode {
         initializeWheels();
         initializeDevices();
 
+        int gain;
+        boolean SampleInsideIntake;
+
+
+        gain = 2;
+        SampleInsideIntake = false;
+        //AllianceColor = "Red";
 
         currentTimer = new ElapsedTime();
 
@@ -104,6 +116,7 @@ public class MegAttackTeleop2 extends LinearOpMode {
         waitForStart();
         if (opModeIsActive()) {
             // RUN BLOCKS:
+            ((NormalizedColorSensor) colorSensor).setGain(gain);
             initializePositions();
             while (opModeIsActive()) {
             //    telemetry.clear();
@@ -113,30 +126,14 @@ public class MegAttackTeleop2 extends LinearOpMode {
                 }
                 manageDriverControls();
                 manageManipulatorControls();
-
+                SampleInsideIntake = colorDetection(AllianceColor, SampleInsideIntake);
                 // get color settings
 
 
-                if(eventTracker.doEvent("Telemetry",currentTimer.seconds(),0.5))
-                {
-
-                    red = colorSensor.red();
-                    green = colorSensor.green();
-                    blue = colorSensor.blue();
-                    distance = distanceSensor.getDistance(DistanceUnit.MM);
-                    if(distance < 10)
-                    {
-                        setLightsGreen();
-                    }
-                    else {
-                        setLightsRed();
-                    }
-                //    telemetry.addData("Red:", red);
-                //    telemetry.addData("Green:", green);
-                //    telemetry.addData("Blue:", blue);
-               //     telemetry.addData("Distance(mm):", distance);
-                    telemetry.update();
-                }
+            //    if(eventTracker.doEvent("Telemetry",currentTimer.seconds(),0.5))
+            //    {
+            //        telemetry.update();
+            //    }
             }
         }
     }
@@ -181,36 +178,28 @@ public class MegAttackTeleop2 extends LinearOpMode {
             DeliveryBoxServo.setPosition(deliveryBoxServoPosition);
             Lift.setTargetPosition(30);
         } else if (gamepad1.dpad_left) {
-            AscendMotor.setPower(0);
+        //    AscendMotor.setPower(0);
             checkExtensionServoSafety();
             Lift.setTargetPosition(Megalodog.liftLowerBasket);
         } else if (gamepad1.dpad_up) {
-            AscendMotor.setPower(0);
+         //   AscendMotor.setPower(0);
             checkExtensionServoSafety();
             Lift.setTargetPosition(Megalodog.liftUpperBasket);
         } else if (gamepad1.dpad_right) {
-            AscendMotor.setPower(0);
+         //   AscendMotor.setPower(0);
             checkExtensionServoSafety();
             Lift.setTargetPosition(Megalodog.liftUpperSpecimenBar);
         }
-
-        while(gamepad1.right_bumper)
+        if(gamepad1.left_bumper)
         {
-            Lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            ((DcMotorEx)Lift).setVelocity(0);
-            ExtensionServo.setPosition(.5);
-            AscendMotor.setPower(-0.95);
+            Megalodog.extensionServoFloor += 0.001;
+            ExtensionServo.setPosition(Megalodog.extensionServoFloor);
         }
-        while(gamepad1.left_bumper)
+        if(gamepad1.right_bumper)
         {
-            Lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-            ((DcMotorEx)Lift).setVelocity(0);
-            ExtensionServo.setPosition(.5);
-            AscendMotor.setPower(0.7);
+            Megalodog.extensionServoFloor -= 0.001;
+            ExtensionServo.setPosition(Megalodog.extensionServoFloor);
         }
-     //   Lift.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        AscendMotor.setPower(0);
-     //   ((DcMotorEx)Lift).setVelocity(0.85*lift_max_velocity);
 
     }
     private void manageManipulatorControls()
@@ -331,8 +320,8 @@ public class MegAttackTeleop2 extends LinearOpMode {
         }
         if(gamepad2.ps)
         {
-            //hangRobot();
-            ExtensionServo.setPosition(.5);
+            ExtensionServo.setPosition(Megalodog.extensionServoFloor+0.005);
+            ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting-0.005);
         }
         if(-gamepad2.right_stick_y > 0.2)
         {
@@ -426,7 +415,7 @@ public class MegAttackTeleop2 extends LinearOpMode {
         SpecimenGripperServo.setPosition(Megalodog.specimenServoStarting);
         GripperRotatorServo.setPosition(Megalodog.gripperRotatorStarting);
         ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
-        setLightsRed();
+
 
     }
 
@@ -524,27 +513,28 @@ public class MegAttackTeleop2 extends LinearOpMode {
         WallFinder = hardwareMap.get(TouchSensor.class, "WallFinder");
         // LEDLeft and LEDRight
 
-        RedLEDLeft = hardwareMap.get(DigitalChannel.class, "LeftLEDRed");
-        RedLEDLeft.setMode(DigitalChannel.Mode.OUTPUT);
-        RedLEDRight = hardwareMap.get(DigitalChannel.class, "RightLEDRed");
-        RedLEDRight.setMode(DigitalChannel.Mode.OUTPUT);
-        GreenLEDLeft = hardwareMap.get(DigitalChannel.class, "LeftLEDGreen");
-        GreenLEDLeft.setMode(DigitalChannel.Mode.OUTPUT);
-        GreenLEDRight = hardwareMap.get(DigitalChannel.class, "RightLEDGreen");
-        GreenLEDRight.setMode(DigitalChannel.Mode.OUTPUT);
-
         colorSensor = hardwareMap.get(ColorSensor.class,"ColorSensor");
-        distanceSensor = hardwareMap.get(DistanceSensor.class, "ColorSensor");
+        leftLEDRed = hardwareMap.get(DigitalChannel.class, "LeftLEDRed");
+        leftLEDGreen = hardwareMap.get(DigitalChannel.class, "LeftLEDGreen");
+        rightLEDRed = hardwareMap.get(DigitalChannel.class, "RightLEDRed");
+        rightLEDGreen = hardwareMap.get(DigitalChannel.class, "RightLEDGreen");
+
+        leftLEDRed.setMode(DigitalChannel.Mode.OUTPUT);
+        leftLEDGreen.setMode(DigitalChannel.Mode.OUTPUT);
+        rightLEDRed.setMode(DigitalChannel.Mode.OUTPUT);
+        rightLEDGreen.setMode(DigitalChannel.Mode.OUTPUT);
+        turnLightsOff();
+
 
         SpecimenGripperServo.setDirection(Servo.Direction.REVERSE);
 
         GripperRotatorServo.setDirection(Servo.Direction.REVERSE);
 
         // Ascend Motor
-        AscendMotor = hardwareMap.get(DcMotor.class, "AscendMotor");
-        AscendMotor.setDirection(DcMotor.Direction.FORWARD);  // forward is UP, to hang use negative power
-        AscendMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-        AscendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    //    AscendMotor = hardwareMap.get(DcMotor.class, "AscendMotor");
+    //    AscendMotor.setDirection(DcMotor.Direction.FORWARD);  // forward is UP, to hang use negative power
+    //    AscendMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+    //    AscendMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         resetExtensionSlider(3000);
 
@@ -573,7 +563,8 @@ public class MegAttackTeleop2 extends LinearOpMode {
         ExtensionSlider.setTargetPosition(0);
         ExtensionSlider.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         ExtensionSlider.setPower(0.8);
-        extensionSliderPosition = 0;
+        extensionSliderPosition = 30;
+        ExtensionSlider.setTargetPosition(30);
     }
 
     private void resetLift()
@@ -666,19 +657,80 @@ public class MegAttackTeleop2 extends LinearOpMode {
 
     public void setLightsGreen()
     {
-        RedLEDLeft.setState(false);
-        GreenLEDLeft.setState(true);
+        leftLEDRed.setState(false);
+        leftLEDGreen.setState(true);
 
-        GreenLEDRight.setState(true);
-        RedLEDRight.setState(false);
+        rightLEDRed.setState(false);
+        rightLEDGreen.setState(true);
     }
     public void setLightsRed()
     {
-        RedLEDLeft.setState(true);
-        GreenLEDLeft.setState(false);
+        leftLEDRed.setState(true);
+        leftLEDGreen.setState(false);
 
-        GreenLEDRight.setState(false);
-        RedLEDRight.setState(true);
+        rightLEDRed.setState(true);
+        rightLEDGreen.setState(false);
     }
 
+    public void turnLightsOff()
+    {
+        leftLEDRed.setState(true);
+        leftLEDGreen.setState(true);
+
+        rightLEDRed.setState(true);
+        rightLEDGreen.setState(true);
+    }
+
+    public boolean colorDetection(String side, boolean sampleIn)
+    {
+        NormalizedRGBA normalizedColors;
+        int color;
+        float hue;
+
+        // Read color from the sensor.
+        normalizedColors = ((NormalizedColorSensor) colorSensor).getNormalizedColors();
+        // Convert RGB values to Hue, Saturation, and Value.
+        color = normalizedColors.toColor();
+        hue = JavaUtil.colorToHue(color);
+        if (sampleDetected()) {
+            // Sample inside Intake
+            if (!sampleIn) {
+                // Only runs when Sample wasn't in before new detection
+                if (hue < 60) {
+                    //  telemetry.addData("Color", "Red");
+                    if (side.equals("Red")) {
+                        setLightsGreen();
+                    } else {
+                        setLightsRed();
+                    }
+                } else if (hue <= 90) {
+                    //   telemetry.addData("Color", "Yellow");
+                    setLightsGreen();
+                } else if (hue >= 210 && hue <= 250) {
+                    //  telemetry.addData("Color", "Blue");
+                    if (side.equals("Blue")) {
+                        setLightsGreen();
+                    } else {
+                        setLightsRed();
+                    }
+                }
+                sampleIn = true;
+            }
+        } else {
+            // Sample not inside Intake
+            //   telemetry.addData("Color", "None");
+            if (sampleIn) {
+                // Only runs when Sample was in before new detection
+                turnLightsOff();
+                sampleIn = false;
+            }
+        }
+
+        return sampleIn;
+    }
+
+    public boolean sampleDetected()
+    {
+        return ((OpticalDistanceSensor) colorSensor).getLightDetected() > 0.1;
+    }
 }

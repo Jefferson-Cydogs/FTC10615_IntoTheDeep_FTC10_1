@@ -16,7 +16,7 @@ public class Megalodog extends MegalodogChassis {
     public final static int liftHome = 30;
     public final static int liftUpperBasket = 3200;
     public final static int liftLowerSpecimenBar = 500;
-    public final static int liftUpperSpecimenBar = 2165;
+    public final static int liftUpperSpecimenBar = 2170;
     public final static int liftPullSpecimenFromUpperBar = 1120;  // 1060 less than upper spec bar
     public final static int liftSnapSpecimen = 200;
     public final static int liftGetSpecimenFromWall = 500;
@@ -24,9 +24,9 @@ public class Megalodog extends MegalodogChassis {
     public final static int liftHangOnUpperBar = 1000;
     // .89 was good when angled higher
     //  .93 was config servo at lower angle
-    public final static double extensionServoFloor = 0.88;
-    public final static double extensionServoDump = 0.205;
-    public final static double extensionServoSafetyPosition = 0.635;
+    public static double extensionServoFloor = 0.809;
+    public final static double extensionServoDump = 0.245;  // was .235
+    public final static double extensionServoSafetyPosition = 0.69;
     public final static double deliveryServoHome = 0.77;
     public final static double deliveryServoDump = 0.23;
     public final static double specimenServoOpen = 0.4;
@@ -37,8 +37,8 @@ public class Megalodog extends MegalodogChassis {
     public final static double gripperRotatorStarting = 0.44;
     public final static double gripperRotatorDeployed = 0.742;
     public final static double gripperRotatorDowntoGrab = 0.75;
-    public final static double extensionBoxRotatorStarting = 0.46;
-    public final static double extensionBoxRotatorDumping = 0.615;
+    public final static double extensionBoxRotatorStarting = 0.544;
+    public final static double extensionBoxRotatorDumping = 0.695;
 
     private double extensionServoPosition;
     private double deliveryBoxServoPosition;
@@ -121,7 +121,7 @@ public class Megalodog extends MegalodogChassis {
             distanceTravelled += 15;
             myOpMode.sleep(200);
         }
-        return (distanceTravelled < maxDistance);
+        return (distanceTravelled < Math.abs(maxDistance));
     }
 
     public void ReverseIntake () {

@@ -132,10 +132,6 @@ public class Config_ExtensionRotator extends LinearOpMode {
         {
             resetLift();
         }
-        if(gamepad1.dpad_up)
-        {
-            allowDriving=true;
-        }
         if(gamepad1.triangle) //  hook specimen
         {
             Lift.setTargetPosition(Megalodog.liftPullSpecimenFromUpperBar);
@@ -150,6 +146,42 @@ public class Config_ExtensionRotator extends LinearOpMode {
             }
             else {
                 GripperRotatorServo.setPosition(Megalodog.gripperRotatorDeployed);
+            }
+        }
+        if(gamepad1.dpad_up)
+        {
+            if(eventTracker.doEvent("Extension Box",currentTimer.seconds(),0.05)) {
+                currentExtensionBoxPosition += 0.005;
+                currentExtensionBoxPosition = Math.max(0.0, Math.min(currentExtensionBoxPosition, 1.0));
+                ExtensionServo.setPosition(currentExtensionBoxPosition);
+                telemetry.addData("extension arm:", currentExtensionBoxPosition);
+            }
+        }
+        if(gamepad1.dpad_down)
+        {
+            if(eventTracker.doEvent("Extension Box",currentTimer.seconds(),0.05)) {
+                currentExtensionBoxPosition -= 0.005;
+                currentExtensionBoxPosition = Math.max(0.0, Math.min(currentExtensionBoxPosition, 1.0));
+                ExtensionServo.setPosition(currentExtensionBoxPosition);
+                telemetry.addData("extension arm:", currentExtensionBoxPosition);
+            }
+        }
+        if(gamepad1.dpad_left)
+        {
+            if(eventTracker.doEvent("Extension Box Rotator",currentTimer.seconds(),0.05)) {
+                currentExtensionBoxRotationPosition += 0.005;
+                currentExtensionBoxRotationPosition = Math.max(0.0, Math.min(currentExtensionBoxRotationPosition, 1.0));
+                ExtensionBoxRotation.setPosition(currentExtensionBoxRotationPosition);
+                telemetry.addData("extension rotate:", currentExtensionBoxRotationPosition);
+            }
+        }
+        if(gamepad1.dpad_right)
+        {
+            if(eventTracker.doEvent("Extension Box Rotator",currentTimer.seconds(),0.05)) {
+                currentExtensionBoxRotationPosition -= 0.005;
+                currentExtensionBoxRotationPosition = Math.max(0.0, Math.min(currentExtensionBoxRotationPosition, 1.0));
+                ExtensionBoxRotation.setPosition(currentExtensionBoxRotationPosition);
+                telemetry.addData("extension rotate:", currentExtensionBoxRotationPosition);
             }
         }
 

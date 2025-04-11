@@ -19,6 +19,7 @@ import org.firstinspires.ftc.teamcode.core.EventTracker;
 import org.firstinspires.ftc.teamcode.intothedeep.Megalodog;
 
 // switch fast and slow drive
+@Disabled
 @TeleOp(name="MEG Attack!", group="Teleop")
 public class MegAttackTeleop extends LinearOpMode {
 
