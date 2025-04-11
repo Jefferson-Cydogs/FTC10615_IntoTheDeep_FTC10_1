@@ -190,7 +190,16 @@ public class MegAttackTeleop2 extends LinearOpMode {
             checkExtensionServoSafety();
             Lift.setTargetPosition(Megalodog.liftUpperSpecimenBar);
         }
-
+        if(gamepad1.left_bumper)
+        {
+            Megalodog.extensionServoFloor += 0.001;
+            ExtensionServo.setPosition(Megalodog.extensionServoFloor);
+        }
+        if(gamepad1.right_bumper)
+        {
+            Megalodog.extensionServoFloor -= 0.001;
+            ExtensionServo.setPosition(Megalodog.extensionServoFloor);
+        }
 
     }
     private void manageManipulatorControls()

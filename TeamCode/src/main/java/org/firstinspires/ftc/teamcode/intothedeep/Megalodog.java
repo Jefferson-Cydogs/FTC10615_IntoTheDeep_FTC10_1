@@ -16,7 +16,7 @@ public class Megalodog extends MegalodogChassis {
     public final static int liftHome = 30;
     public final static int liftUpperBasket = 3200;
     public final static int liftLowerSpecimenBar = 500;
-    public final static int liftUpperSpecimenBar = 2168;
+    public final static int liftUpperSpecimenBar = 2170;
     public final static int liftPullSpecimenFromUpperBar = 1120;  // 1060 less than upper spec bar
     public final static int liftSnapSpecimen = 200;
     public final static int liftGetSpecimenFromWall = 500;
@@ -24,7 +24,7 @@ public class Megalodog extends MegalodogChassis {
     public final static int liftHangOnUpperBar = 1000;
     // .89 was good when angled higher
     //  .93 was config servo at lower angle
-    public final static double extensionServoFloor = 0.826;
+    public static double extensionServoFloor = 0.809;
     public final static double extensionServoDump = 0.245;  // was .235
     public final static double extensionServoSafetyPosition = 0.69;
     public final static double deliveryServoHome = 0.77;
