@@ -40,7 +40,7 @@ public class Config_Servo2 extends LinearOpMode {
 
         //Display selection Instructions during Intialzation
         telemetry.addLine("Select Servo to Test using PlayStation Controller Buttons.")
-                .addData("\nCross(X)", "Extension")
+                .addData("\nCross(X)", "Extension Rotator")
                 .addData("\nCircle(O)", "Delivery Box")
                 .addData("\nSquare(N)", "Specimen Gripper")
                 .addData("\nTriangle(A)", "Specimen Gripper Rotator")
@@ -55,7 +55,7 @@ public class Config_Servo2 extends LinearOpMode {
         while (opModeIsActive() && selectedServo == null) {
 //Check for servo selection buttons based on PlayStation controller mapping
             if (gamepad1.a) {//Cross(X)button
-                selectedServoName = "Extension";
+                selectedServoName = "ExtensionBoxRotator";
                 selectedServo = initalizeServo(selectedServoName);
                 telemetry.addData("Selected Servo", selectedServoName);
                 telemetry.update();
