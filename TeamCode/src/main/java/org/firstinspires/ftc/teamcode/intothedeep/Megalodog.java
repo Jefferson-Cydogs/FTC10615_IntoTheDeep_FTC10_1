@@ -24,22 +24,26 @@ public class Megalodog extends MegalodogChassis {
     public final static int liftHangOnUpperBar = 1000;
     // .89 was good when angled higher
     //  .93 was config servo at lower angle
-    public static double extensionServoFloor = 0.69;
-    public final static double extensionServoDump = 0.23;  // was                .235
-    public final static double extensionServoSafetyPosition = 0.4;
+    public static double extensionServoFloor = 0.585;  // elbow
+    public final static double extensionServoDump = 0.1;  // elbow
+    public final static double extensionServoDumpStep1 = 0.2;
+    public final static double extensionServoDumpStep2 = 0.4;
+    public final static double extensionServoSafetyPosition = 0.25;
     public final static double deliveryServoHome = 0.04;
-    public final static double deliveryServoDump = 0.55;
+    public final static double deliveryServoDump = 0.6;
     public final static double deliveryServoSpeciem = 0.9;
     public final static double specimenServoOpen = 0.73;
-    public final static double specimenServoClosed = 0.62;
-    public final static double specimenServoStarting = 0.527;
-    public final static double continuousIntakePower = 0.4;
+    public final static double specimenServoClosed = 0.02;
+    public final static double specimenServoStarting = 0.3;
+    public final static double continuousIntakePower = 0.6;
     public final static double continuousIntakeDumpPower = 0.6;
     public final static double gripperRotatorStarting = 0.44;
     public final static double gripperRotatorDeployed = 0.742;
     public final static double gripperRotatorDowntoGrab = 0.75;
-    public final static double extensionBoxRotatorStarting = 0.544;
-    public final static double extensionBoxRotatorDumping = 0.695;
+    public final static double extensionBoxRotatorStarting = 0.7; // Floor - Wrist
+    public final static double extensionBoxRotatorDumpStep1 = 0.55;
+    public final static double extensionBoxRotatorDumpStep2 = 0.4;
+    public final static double extensionBoxRotatorDumping = 0.2;
 
     private double extensionServoPosition;
     private double deliveryBoxServoPosition;

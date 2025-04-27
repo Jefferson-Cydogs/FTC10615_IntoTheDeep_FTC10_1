@@ -27,7 +27,7 @@ public class Config_Servo2 extends LinearOpMode {
 
     private boolean updated = false;
 
-    //Define the initial servoPosition
+    //Define the inital servoPosition
     private double servoPosition = 0.5;
 
     //Timer for optional servo select time out
@@ -40,10 +40,10 @@ public class Config_Servo2 extends LinearOpMode {
 
         //Display selection Instructions during Intialzation
         telemetry.addLine("Select Servo to Test using PlayStation Controller Buttons.")
-                .addData("\nCross(X)", "Extension Rotator")
+                .addData("\nCross(X)", "Extension")
                 .addData("\nCircle(O)", "Delivery Box")
                 .addData("\nSquare(N)", "Specimen Gripper")
-                .addData("\nTriangle(A)", "Specimen Gripper Rotator")
+                .addData("\nTriangle(A)", "Extension Box Rotator")
                 .addData("\nCurrent Selection", selectedServoName);
         telemetry.update();
 
@@ -55,7 +55,7 @@ public class Config_Servo2 extends LinearOpMode {
         while (opModeIsActive() && selectedServo == null) {
 //Check for servo selection buttons based on PlayStation controller mapping
             if (gamepad1.a) {//Cross(X)button
-                selectedServoName = "ExtensionBoxRotator";
+                selectedServoName = "Extension";
                 selectedServo = initalizeServo(selectedServoName);
                 telemetry.addData("Selected Servo", selectedServoName);
                 telemetry.update();
@@ -74,9 +74,9 @@ public class Config_Servo2 extends LinearOpMode {
                 telemetry.update();
                 sleep(300);
             } else if (gamepad1.y) {//Triangle button
-                selectedServoName = "GripperRotator";
+                selectedServoName = "ExtensionBoxRotator";
                 selectedServo = initalizeServo(selectedServoName);
-                selectedServo.setDirection(Servo.Direction.REVERSE);
+                //selectedServo.setDirection(Servo.Direction.REVERSE);
                 telemetry.addData("Selected Servo", selectedServoName);
                 telemetry.update();
                 sleep(300);

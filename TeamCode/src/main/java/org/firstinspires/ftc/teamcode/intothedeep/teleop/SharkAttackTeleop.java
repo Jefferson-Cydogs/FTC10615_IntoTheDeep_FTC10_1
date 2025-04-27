@@ -174,13 +174,21 @@ public class SharkAttackTeleop extends LinearOpMode {
     {
         if(gamepad2.circle)  // dump extension servo
         {
+
             if(checkIsLiftDown()) {
-                ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorDumping);
+                //ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorDumping);
+
+                ExtensionServo.setPosition(Megalodog.extensionServoDumpStep1);
+                ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorDumpStep1);
+                ExtensionServo.setPosition(Megalodog.extensionServoDumpStep2);
+                ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorDumpStep2);
                 ExtensionServo.setPosition(Megalodog.extensionServoDump);
+                ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorDumping);
             }
         }
         if(gamepad2.square) // extension to floor
         {
+            checkIsExtensionOutAtLeastALittle();
             if(checkIsIntakeUp())
             {
                 ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
@@ -224,9 +232,9 @@ public class SharkAttackTeleop extends LinearOpMode {
         }
 
         if(gamepad2.left_bumper){ // Specimen Gripper OPEN
-            if(checkRotatorGripperIsDeployed()) {
+         //   if(checkRotatorGripperIsDeployed()) {
                 if (eventTracker.doEvent("Open Gripper", currentTimer.seconds(), 0.10))
-                {      SpecimenGripperServo.setPosition(Megalodog.specimenServoOpen);  }
+                {     SpecimenGripperServo.setPosition(Megalodog.specimenServoOpen);
             }
         }
         if(WallFinder.isPressed() && checkIsLiftDown())
@@ -269,13 +277,14 @@ public class SharkAttackTeleop extends LinearOpMode {
             checkExtensionServoSafety();
             Lift.setTargetPosition(Megalodog.liftUpperSpecimenBar);
         }
+        // temporarily disabling
         if(-gamepad2.right_stick_y > 0.2)
         {
             if(eventTracker.doEvent("Extension Box Rotator",currentTimer.seconds(),0.05)) {
-                currentExtensionBoxRotationPosition += extensionBoxRotationSpeed;
-                currentExtensionBoxRotationPosition = Math.max(0.0, Math.min(currentExtensionBoxRotationPosition, 1.0));
-                ExtensionBoxRotation.setPosition(currentExtensionBoxRotationPosition);
-                telemetry.addData("extension rotate:", currentExtensionBoxRotationPosition);
+            //    currentExtensionBoxRotationPosition += extensionBoxRotationSpeed;
+            //    currentExtensionBoxRotationPosition = Math.max(0.0, Math.min(currentExtensionBoxRotationPosition, 1.0));
+            //    ExtensionBoxRotation.setPosition(currentExtensionBoxRotationPosition);
+            //    telemetry.addData("extension rotate:", currentExtensionBoxRotationPosition);
             }
         }
         if(gamepad2.ps)
@@ -283,13 +292,15 @@ public class SharkAttackTeleop extends LinearOpMode {
             //hangRobot();
             ExtensionServo.setPosition(.5);
         }
+
+        // temporarily disabling
         if(-gamepad2.right_stick_y < -0.2)
         {
             if(eventTracker.doEvent("Extension Box Rotator",currentTimer.seconds(),0.05)) {
-                currentExtensionBoxRotationPosition -= extensionBoxRotationSpeed;
-                currentExtensionBoxRotationPosition = Math.max(0.0, Math.min(currentExtensionBoxRotationPosition, 1.0));
-                ExtensionBoxRotation.setPosition(currentExtensionBoxRotationPosition);
-                telemetry.addData("extension rotate:", currentExtensionBoxRotationPosition);
+            //    currentExtensionBoxRotationPosition -= extensionBoxRotationSpeed;
+            //    currentExtensionBoxRotationPosition = Math.max(0.0, Math.min(currentExtensionBoxRotationPosition, 1.0));
+            //    ExtensionBoxRotation.setPosition(currentExtensionBoxRotationPosition);
+            //    telemetry.addData("extension rotate:", currentExtensionBoxRotationPosition);
             }
         }
         if(-gamepad2.left_stick_y > 0.2)
@@ -297,7 +308,7 @@ public class SharkAttackTeleop extends LinearOpMode {
             if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.10))
             {
                 if (extensionSliderPosition < Megalodog.extensionSliderMax-120) {
-                    ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
+         //           ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
                     extensionSliderPosition += 120;
                     ExtensionSlider.setTargetPosition(extensionSliderPosition);
                 }
@@ -307,8 +318,8 @@ public class SharkAttackTeleop extends LinearOpMode {
         {
             if(eventTracker.doEvent("ExtendIntake", currentTimer.seconds(), 0.10)) {
                 if (extensionSliderPosition > 120) {
-                    ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
-                    ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
+           //         ExtensionServo.setPosition(Megalodog.extensionServoSafetyPosition);
+           //         ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
                     extensionSliderPosition -= 120;
                     if(extensionSliderPosition < 150)
                     {
@@ -378,6 +389,7 @@ public class SharkAttackTeleop extends LinearOpMode {
         GripperRotatorServo.setPosition(Megalodog.gripperRotatorStarting);
         ExtensionBoxRotation.setPosition(Megalodog.extensionBoxRotatorStarting);
         setLightsRed();
+        checkIsExtensionOutAtLeastALittle();
 
     }
 
@@ -573,6 +585,15 @@ public class SharkAttackTeleop extends LinearOpMode {
     private boolean checkIsExtensionHome()
     {
         return (ExtensionSlider.getCurrentPosition() < 100);
+    }
+
+    private boolean checkIsExtensionOutAtLeastALittle()
+    {
+        if(ExtensionSlider.getCurrentPosition() < 100)
+        {
+            ExtensionSlider.setTargetPosition(180);
+        }
+        return true;
     }
     private void checkExtensionBoxForDrive()
     {
